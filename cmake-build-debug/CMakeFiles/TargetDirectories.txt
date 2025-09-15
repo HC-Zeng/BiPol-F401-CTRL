@@ -1,0 +1,3 @@
+C:/Users/HC/CLionProjects/BiPol-F401-CTRL/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir
+C:/Users/HC/CLionProjects/BiPol-F401-CTRL/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/HC/CLionProjects/BiPol-F401-CTRL/cmake-build-debug/CMakeFiles/rebuild_cache.dir
