@@ -72,6 +72,8 @@ void Error_Handler(void);
 #define ADC_C3_GPIO_Port GPIOA
 #define ADC_C3A7_Pin GPIO_PIN_7
 #define ADC_C3A7_GPIO_Port GPIOA
+#define BUZZER_Pin GPIO_PIN_4
+#define BUZZER_GPIO_Port GPIOC
 #define AUTO_TRIG_Pin GPIO_PIN_12
 #define AUTO_TRIG_GPIO_Port GPIOB
 #define AUTO_TRIG_EXTI_IRQn EXTI15_10_IRQn

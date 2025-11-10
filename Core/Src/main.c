@@ -45,7 +45,7 @@ PUTCHAR_PROTOTYPE
 }
 #endif
 
-volatile uint32_t timer_overflow_count = 0;  // 溢出次数�?????????32位扩展）
+volatile uint32_t timer_overflow_count = 0;  // 溢出次数�??????????????32位扩展）
 
 uint64_t Get_Global_Time_us(void) {
     uint32_t overflow, counter;
@@ -53,34 +53,36 @@ uint64_t Get_Global_Time_us(void) {
         overflow = timer_overflow_count;
         counter = __HAL_TIM_GET_COUNTER(&htim2);
     } while (overflow != timer_overflow_count); // 无锁校验
-    return ((uint64_t)overflow<<32) | counter; // 组合�?????????64位时间戳
+    return ((uint64_t)overflow<<32) | counter; // 组合�??????????????64位时间戳
 }
 
+void didi()
+{
+    HAL_TIM_Base_Start_IT(&htim3);
+}
+
+uint8_t bezCnt = 0;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if (htim->Instance == TIM2) {
         timer_overflow_count++;
     }
+    if (htim->Instance == TIM3) {
+        HAL_GPIO_TogglePin(BUZZER_GPIO_Port,BUZZER_Pin);
+        bezCnt += 1;
+        if(bezCnt>35)
+        {
+            bezCnt=0;
+            HAL_TIM_Base_Stop_IT(&htim3);
+        }
+    }
 }
 
-uint8_t flashing()
-{
-    static uint64_t pretime = 0;
-    uint64_t crrtime = Get_Global_Time_us();
-    if(crrtime > pretime + 1000000)
-    {
-        HAL_GPIO_TogglePin(LED2_GPIO_Port,LED2_Pin);
-        pretime = crrtime;
-        printf("Tick:%lld\r\n",crrtime);
-        return 1;
-    }
-    return 0;
-}
 
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-/* 系统状�?�枚�????? */
+/* 系统状�?�枚�?????????? */
 typedef enum {
     STATE_INIT = 0,
     STATE_CHARGE,
@@ -92,9 +94,10 @@ typedef enum {
 /* 全局变量 */
 SystemState g_state = STATE_INIT;
 
-uint32_t g_adc_buffer[5];            // ADC采样缓冲�?????
+uint32_t g_adc_buffer[5];            // ADC采样缓冲�??????????
 uint16_t g_target_voltage_mv = 0;    // 目标电压 (mV)
 uint16_t g_cap_voltage_mv[4] = {0};  // 电容电压 (mV)
+uint16_t g_temp = 0;                 // 温度电压 (mv)
 
 
 uint8_t g_pulse_generating = 0;
@@ -117,6 +120,29 @@ uint8_t trig_type=0; //0: no trig; 1: AMT trig; 2: AUTO trig
 void SystemStateMachine(void);
 void UpdateVoltageMeasurements(void);
 
+uint8_t env_detect()
+{
+    static uint64_t pretime = 0;
+    uint64_t crrtime = Get_Global_Time_us();
+    if(crrtime > pretime + 1000000)
+    {
+//        HAL_GPIO_TogglePin(LED2_GPIO_Port,LED2_Pin);
+        pretime = crrtime;
+        if(g_temp<1500)
+        {
+            printf("FAN ON\r\n");
+            HAL_GPIO_WritePin(CTR_FAN_GPIO_Port,CTR_FAN_Pin,1);
+        }
+        if(g_temp>1700)
+        {
+            printf("FAN OFF\r\n");
+            HAL_GPIO_WritePin(CTR_FAN_GPIO_Port,CTR_FAN_Pin,0);
+        }
+        return 1;
+    }
+    return 0;
+}
+
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
     if(hadc->Instance == ADC1) {
         HAL_GPIO_TogglePin(LED2_GPIO_Port,LED2_Pin);
@@ -127,19 +153,21 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
 #define ALPHA 0.1f
 static uint16_t filtered_voltage[4] = {0};
 
-/* 更新电压测量并处理串口输�???? */
+/* 更新电压测量并处理串口输�????????? */
 void UpdateVoltageMeasurements(void) {
 
-    // 1. 更新目标电压 (PA3)
-    g_target_voltage_mv = (u_int16_t)(g_U/2.0f*1000.0f); //(uint16_t)(g_adc_buffer[0] * 3300.0f / 4096.0f);
-//    if(g_target_voltage_mv > VOLTAGE_MAX) g_target_voltage_mv = VOLTAGE_MAX;
+    // 1. 更新目标电压
+    g_target_voltage_mv = (u_int16_t)(g_U/2.0f*1000.0f);
 
-    // 2. 更新电容电压 (PA4-PA7)
+    // 2. 更新温度数据(PA3)
+    g_temp = (uint16_t)(g_adc_buffer[0] * 3300.0f / 4096.0f); // <1500,fan on; >1700, fan off
+
+    // 3. 更新电容电压 (PA4-PA7)
     for(int i = 0; i < 4; i++) {
         float adc_voltage = g_adc_buffer[i+1] * 3.3f / 4096.0f;
         uint16_t raw_voltage = (uint16_t)(adc_voltage * (16.0f / 10.0f) * 1000);
 
-        // �????阶低通滤�????
+        // �?????????阶低通滤�?????????
         if(filtered_voltage[i] == 0) {
             // 第一次计算，直接赋�??
             filtered_voltage[i] = raw_voltage;
@@ -171,7 +199,7 @@ void SystemStateMachine(void) {
     uint16_t avg_voltage = 0;
     uint8_t max_id = 0;
 
-    // 计算统计�??
+    // 计算统计�???????
     for(i = 0; i < 4; i++) {
         if(g_cap_voltage_mv[i] > max_voltage)
         {
@@ -193,7 +221,7 @@ void SystemStateMachine(void) {
             break;
 
         case STATE_CHARGE: {
-            // 打开充电�??�??
+            // 打开充电�???????�???????
             HAL_GPIO_WritePin(CTR_SW_GPIO_Port, CTR_SW_Pin, GPIO_PIN_SET);
             // 禁止均衡
             HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, GPIO_PIN_RESET);
@@ -201,7 +229,7 @@ void SystemStateMachine(void) {
             HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, GPIO_PIN_RESET);
             HAL_GPIO_WritePin(CTR_C4_GPIO_Port, CTR_C4_Pin, GPIO_PIN_RESET);
 
-            // 平均电压大于设定值的80%，开始均�??
+            // 平均电压大于设定值的80%，开始均�???????
             if(avg_voltage > g_target_voltage_mv*0.3) {
                 g_state = STATE_BALANCE;
             }
@@ -209,31 +237,31 @@ void SystemStateMachine(void) {
         }
 
         case STATE_BALANCE: {
-            // 打开充电�??�??
+            // 打开充电�???????�???????
             HAL_GPIO_WritePin(CTR_SW_GPIO_Port, CTR_SW_Pin, GPIO_PIN_SET);
 
             // 均衡控制策略
             uint8_t discharge_flags[4] = {0};
 
-            // 四路电压的最大�?�减去最小�?�大于平衡阈值，�??始均衡，把最大电压的电容放电
+            // 四路电压的最大�?�减去最小�?�大于平衡阈值，�???????始均衡，把最大电压的电容放电
             if(max_voltage-min_voltage > BALANCE_THRESHOLD)
             {
                 discharge_flags[max_id] = 1;
             }
 
-            // 设置放电管状�??
+            // 设置放电管状�???????
             HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, discharge_flags[0]);
             HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, discharge_flags[1]);
             HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, discharge_flags[2]);
             HAL_GPIO_WritePin(CTR_C4_GPIO_Port, CTR_C4_Pin, discharge_flags[3]);
 
-            // 四路�??大电压小于设定�?�的80%，转到充�??
+            // 四路�???????大电压小于设定�?�的80%，转到充�???????
             if(max_voltage<g_target_voltage_mv*0.8)
             {
                 g_state = STATE_CHARGE;
             }
 
-            // 平均电压大于设定值，即进入保�??
+            // 平均电压大于设定值，即进入保�???????
             if(avg_voltage>g_target_voltage_mv) {
                 g_state = STATE_MAINTAIN;
             }
@@ -247,13 +275,13 @@ void SystemStateMachine(void) {
             // 均衡控制策略
             uint8_t discharge_flags[4] = {0};
 
-            // 四路电压的最大�?�减去最小�?�大于平衡阈值，�??始均衡，把最大电压的电容放电
+            // 四路电压的最大�?�减去最小�?�大于平衡阈值，�???????始均衡，把最大电压的电容放电
             if(max_voltage-min_voltage > BALANCE_THRESHOLD)
             {
                 discharge_flags[max_id] = 1;
             }
 
-            // 设置放电管状�??
+            // 设置放电管状�???????
             HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, discharge_flags[0] );
             HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, discharge_flags[1] );
             HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, discharge_flags[2] );
@@ -265,7 +293,7 @@ void SystemStateMachine(void) {
                 g_state = STATE_BALANCE;
             }
 
-            // 四路电压�??小�?�大于设定，转到放电
+            // 四路电压�???????小�?�大于设定，转到放电
             if(min_voltage>g_target_voltage_mv)
             {
                 g_state = STATE_DISCHARGE;
@@ -281,7 +309,7 @@ void SystemStateMachine(void) {
             uint8_t discharge_flags[4] = {0};
             uint8_t all_in_range = 1;
 
-            // 大于设（设定+阈�?�）的全部进行放�??
+            // 大于设（设定+阈�?�）的全部进行放�???????
             for(i = 0; i < 4; i++) {
                 if ((g_cap_voltage_mv[i]>=g_target_voltage_mv) && (g_cap_voltage_mv[i] - g_target_voltage_mv > BALANCE_THRESHOLD)) {
                     discharge_flags[i] = 1;
@@ -289,7 +317,7 @@ void SystemStateMachine(void) {
                 }
             }
 
-            // 设置放电管状�??
+            // 设置放电管状�???????
             HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, discharge_flags[0] );
             HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, discharge_flags[1] );
             HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, discharge_flags[2] );
@@ -727,7 +755,7 @@ void show_CH2()
 int numLength(uint32_t num) {
     int len = 0;
 
-    // 处理0的情�??
+    // 处理0的情�???????
     if (num == 0) {
         return 1;
     }
@@ -737,7 +765,7 @@ int numLength(uint32_t num) {
         num = -num;
     }
 
-    // 通过循环除以10来计算位�??
+    // 通过循环除以10来计算位�???????
     while (num != 0) {
         len++;
         num /= 10;
@@ -798,24 +826,24 @@ void saveBeforeExit()
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-// 状�?�枚�??
+// 状�?�枚�???????
 typedef enum {
     IDLE_MODE,      // 空闲状�??
     SELECT_MODE,    // 选择变量状�??
     EDIT_MODE       // 修改变量状�??
 } State;
 
-// 全局状�?�变�??
+// 全局状�?�变�???????
 State current_state = IDLE_MODE;
 uint8_t selected_index = 5;  // 当前选中的变量索引：0,1,2,3,4,5 ==> U, PSQR, CH1, COOL, CH2, STORAGE
-uint32_t prev_cnt = 2000000000;  // 初始值与你给的g_cnt初始值相�??
-uint64_t last_activity_time = 0; // �??后一次活动时间戳
-const uint64_t IDLE_TIMEOUT = 3000000; // 空闲超时时间3�??
+uint32_t prev_cnt = 2000000000;  // 初始值与你给的g_cnt初始值相�???????
+uint64_t last_activity_time = 0; // �???????后一次活动时间戳
+const uint64_t IDLE_TIMEOUT = 3000000; // 空闲超时时间3�???????
 // 状�?�机处理函数
 void update_state_machine(void) {
     uint64_t current_time = Get_Global_Time_us();
 
-    // �??查空闲超时（除了IDLE_MODE状�?�外�??
+    // �???????查空闲超时（除了IDLE_MODE状�?�外�???????
     if (current_state != IDLE_MODE) {
         if (current_time - last_activity_time > IDLE_TIMEOUT) {
             if(current_state==EDIT_MODE)
@@ -837,10 +865,10 @@ void update_state_machine(void) {
         }
     }
 
-    // 计算编码器计数的变化�??
+    // 计算编码器计数的变化�???????
     int32_t diff = (int32_t)(g_cnt - prev_cnt);
 
-    // 处理按钮事件（如果按钮被按下�??
+    // 处理按钮事件（如果按钮被按下�???????
     if (g_btn == 1) {
         printf("btn=ON\r\n");
         last_activity_time = current_time; // 更新活动时间
@@ -857,7 +885,7 @@ void update_state_machine(void) {
             draw_edited(selected_index,GREEN,0); // un edit
             show_select_index(selected_index);
         }
-        g_btn = 0;  // 清除按钮状�?�（软件清零�??
+        g_btn = 0;  // 清除按钮状�?�（软件清零�???????
         return;
     }
 
@@ -871,7 +899,7 @@ void update_state_machine(void) {
             // 在空闲模式下旋转编码器，进入选择模式
             current_state = SELECT_MODE;
         } else if (current_state == SELECT_MODE) {
-            // 在�?�择模式下，旋转编码器改变�?�中的变�??
+            // 在�?�择模式下，旋转编码器改变�?�中的变�???????
             if (diff > 0) {
                 // 正转
                 selected_index = (selected_index + 1) % 6;
@@ -889,7 +917,7 @@ void update_state_machine(void) {
 //            Show_Float(364,90,(float)123,16,1);
             show_select_index(selected_index);
         } else if (current_state == EDIT_MODE) {
-            // 在编辑模式下，旋转编码器改变当前选中的变量的�??
+            // 在编辑模式下，旋转编码器改变当前选中的变量的�???????
             switch (selected_index) {
                 case 0: // g_U: 0.0-6.0 v
                     if(diff>0)
@@ -1106,12 +1134,13 @@ int main(void)
   MX_SPI3_Init();
   MX_USART1_UART_Init();
   MX_CRC_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)g_adc_buffer, 5);
   HAL_TIM_Base_Start_IT(&htim2);
   FlashStore_Init();
 
-    // 初始状�?�设�??
+    // 初始状�?�设�???????
     HAL_GPIO_WritePin(CTR_SW_GPIO_Port, CTR_SW_Pin, GPIO_PIN_RESET); // 关闭充电
     HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, GPIO_PIN_RESET);   // 关闭放电
     HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, GPIO_PIN_RESET);
@@ -1169,20 +1198,23 @@ int main(void)
   uint64_t pretime = 0;
   while (1)
   {
-//      flashing();
+      env_detect();
       uint64_t crrtime = Get_Global_Time_us();
+      uint64_t buzzertime = crrtime;
       if(crrtime > pretime + 100000)
       {
           pretime = crrtime;
 //          输出格式: 时间(ms),目标电压,电容1,电容2,电容3,电容4,状�??
-//          printf("Set=%u,C1=%u,C2=%u,C3=%u,C4=%u,St=%d\r\n",
-//                 g_target_voltage_mv,
-//                 g_cap_voltage_mv[0],
-//                 g_cap_voltage_mv[1],
-//                 g_cap_voltage_mv[2],
-//                 g_cap_voltage_mv[3],
-//                 g_state);
+          printf("Set=%u,T=%u,C1=%u,C2=%u,C3=%u,C4=%u,St=%d\r\n",
+                 g_target_voltage_mv,
+                 g_temp,
+                 g_cap_voltage_mv[0],
+                 g_cap_voltage_mv[1],
+                 g_cap_voltage_mv[2],
+                 g_cap_voltage_mv[3],
+                 g_state);
       }
+
       update_state_machine();
       update_pulse_generation();
       update_cap_equalizer();
@@ -1254,29 +1286,35 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
             case SET_Pin:
                 if(Get_Global_Time_us()>BtnTimeStamp+500000)
                 {
+                    didi();
                     g_btn = 1;
                     BtnTimeStamp = Get_Global_Time_us();
                 }
                 break;
             case PHA_Pin:
+
                 pha = HAL_GPIO_ReadPin(PHA_GPIO_Port,PHA_Pin);
                 phb = HAL_GPIO_ReadPin(PHB_GPIO_Port,PHB_Pin);
-
-                if(pha==1 && phb==0)
+                printf("pha:%d,phb:%d\r\n",pha,phb);
+                if(pha==1 && phb==0) // product xuan niu
+                    // if(phb==1 && pha==0) // my xuan niu
                 {
                     state = 10;
                 }
                 if(state == 10 && pha==0 && phb==1)
                 {
+                    didi();
                     g_cnt ++;
                     state = 0;
                 }
-                if(pha==1 && phb==1)
+                if(pha==0 && phb==0)
+                    //if(pha==0 && phb==0) // my xuan niu
                 {
                     state = 11;
                 }
                 if(state == 11 && pha==0 && phb==0)
                 {
+                    didi();
                     g_cnt --;
                     state = 0;
                 }
