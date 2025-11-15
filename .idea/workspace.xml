@@ -12,15 +12,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f3cf9544-c875-4e3b-89ad-c098b2511466" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BiPol-F401-CTRL.ioc" beforeDir="false" afterPath="$PROJECT_DIR$/BiPol-F401-CTRL.ioc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/main.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/main.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/stm32f4xx_it.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/stm32f4xx_it.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/tim.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/tim.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/gpio.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/gpio.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Inc/LCD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/LCD.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/LCD.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/LCD.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/Src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/stm32f4xx_it.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/stm32f4xx_it.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/tim.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/tim.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.elf" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.elf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.hex" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.hex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.map" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/LCD.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/LCD.c.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/main.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/main.c.obj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +33,13 @@
     <option name="formatViaClangd" value="false" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -56,12 +65,12 @@
     <property name="cf.first.check.clang-format" value="false" />
     <property name="cidr.known.project.marker" value="true" />
     <property name="cmake.loaded.for.project" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Core/Src" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\HC\CLionProjects\BiPol-F401-CTRL\Core\Src" />
       <recent name="C:\Users\HC\CLionProjects\BiPol-F401-CTRL\Core\Inc" />
+      <recent name="C:\Users\HC\CLionProjects\BiPol-F401-CTRL\Core\Src" />
     </key>
   </component>
   <component name="RunManager" selected="OpenOCD Download &amp; Run.OCD BiPol-F401-CTRL">
@@ -70,15 +79,42 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
+    </configuration>
+    <configuration name="calculate" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="BiPol-F401-CTRL" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/calculate.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
     </configuration>
     <list>
       <item itemvalue="CMake Application.BiPol-F401-CTRL.elf" />
       <item itemvalue="OpenOCD Download &amp; Run.OCD BiPol-F401-CTRL" />
+      <item itemvalue="Python.calculate" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.calculate" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -96,6 +132,8 @@
       <workItem from="1760862703445" duration="457000" />
       <workItem from="1760874779381" duration="1749000" />
       <workItem from="1762774520669" duration="1725000" />
+      <workItem from="1762777779541" duration="1276000" />
+      <workItem from="1762871750094" duration="26750000" />
     </task>
     <servers />
   </component>

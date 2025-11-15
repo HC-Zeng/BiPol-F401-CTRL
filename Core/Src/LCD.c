@@ -4,6 +4,7 @@
 #include "gpio.h"
 #include "spi.h"
 #include "stdio.h"
+#include <math.h>
 
 //LCD的画笔颜色和背景色
 uint16_t POINT_COLOR=WHITE;	//画笔颜色
@@ -519,3 +520,58 @@ void Show_Float_2(uint16_t x, uint16_t y, float value,uint8_t size,uint8_t mode)
 
     Show_Str(x, y, buffer, size, mode);
 }
+
+//在指定位置画一个指定大小的圆
+//(x,y):中心点
+//r    :半径
+//void LCD_Draw_Circle(u16 x0,u16 y0,u8 r)
+//{
+//    int a,b;
+//    int di;
+//    a=0;b=r;
+//    di=3-(r<<1);             //判断下个点位置的标志
+//    while(a<=b)
+//    {
+//        LCD_DrawPoint(x0+a,y0-b);             //5
+//        LCD_DrawPoint(x0+b,y0-a);             //0
+//        LCD_DrawPoint(x0+b,y0+a);             //4
+//        LCD_DrawPoint(x0+a,y0+b);             //6
+//        LCD_DrawPoint(x0-a,y0+b);             //1
+//        LCD_DrawPoint(x0-b,y0+a);
+//        LCD_DrawPoint(x0-a,y0-b);             //2
+//        LCD_DrawPoint(x0-b,y0-a);             //7
+//        a++;
+//        //使用Bresenham算法画圆
+//        if(di<0)di +=4*a+6;
+//        else
+//        {
+//            di+=10+4*(a-b);
+//            b--;
+//        }
+//    }
+//}
+
+void LCD_Draw_Circle(u16 x0,u16 y0,u8 r)
+{
+    u32 i;
+    u32 imax = ((u32)r*707)/1000+1;
+    u32 sqmax = (u32)r*(u32)r+(u32)r/2;
+    u32 x=r;
+    LCD_DrawLine(x0-r,y0,x0+r,y0);
+    for (i=1;i<=imax;i++)
+    {
+        if ((i*i+x*x)>sqmax)// draw lines from outside
+        {
+            if (x>imax)
+            {
+                LCD_DrawLine(x0-i+1,y0+x,x0-i+1+2*(i-1),y0+x);
+                LCD_DrawLine(x0-i+1,y0-x,x0-i+1+2*(i-1),y0-x);
+            }
+            x--;
+        }
+        // draw lines from inside (center)
+        LCD_DrawLine(x0-x,y0+i,x0+x,y0+i);
+        LCD_DrawLine(x0-x,y0-i,x0+x,y0-i);
+    }
+}
+

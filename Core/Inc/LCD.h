@@ -84,6 +84,20 @@ extern uint16_t  BACK_COLOR; //背景颜色.默认为白色
 #define LGRAYBLUE        0x59AE  // 原0xA651 → 反相后0x59AE
 #define LBBLUE           0xD4ED  // 原0x2B12 → 反相后0xD4ED
 
+#define PALE_SILVER      0x3208  // RGB(204,188,188) 反相后的RGB565值
+#define STEEL_BLUE 0xB4AB  // RGB(75,107,164) 反相后的RGB565值
+#define DARK_GRAY 0xBDF7  // RGB(64,64,64) 反相后的RGB565值
+#define DARK_RED_BROWN 0xAF3F  // RGB(87,25,2) 反相后的RGB565值
+#define GOLDEN_YELLOW 0x01DF  // RGB(251,202,3) 反相后的RGB565值
+#define OLIVE_GREEN 0xBC7F  // RGB(70,114,5) 反相后的RGB565值
+#define DARK_BROWN 0xB65F  // RGB(77,55,3) 反相后的RGB565值
+#define MIDNIGHT_BLUE 0xEF71  // RGB(19,17,118) 反相后的RGB565值
+#define COBALT_BLUE 0xFDAD  // RGB(3,74,148) 反相后的RGB565值
+#define CRIMSON_RED 0x5F9D  // RGB(166,15,20) 反相后的RGB565值
+#define CORAL_PINK 0x0491  // RGB(254,111,113) 反相后的RGB565值
+#define SAGE_GREEN 0x6B52  // RGB(147,148,108) 反相后的RGB565值
+#define LIME_GREEN 0x717C  // RGB(136,211,26) 反相后的RGB565值
+
 
 void LCD_Init(void);			   //初始化
 void LCD_Clear(uint16_t Color);	   //清屏
@@ -98,4 +112,6 @@ void LCD_Fill(u16 sx,u16 sy,u16 ex,u16 ey,u16 color);
 void Show_Float(uint16_t x, uint16_t y, float value,uint8_t size,uint8_t mode);
 void Show_Float_2(uint16_t x, uint16_t y, float value,uint8_t size,uint8_t mode);
 
+void LCD_Draw_Circle(u16 x0,u16 y0,uint8_t r);
+void LCD_Draw_Ring(u16 x0, u16 y0, u16 r, u16 width);
 #endif //ST7796_SPI_LCD_H

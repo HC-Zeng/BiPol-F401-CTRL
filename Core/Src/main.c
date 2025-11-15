@@ -26,7 +26,6 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
@@ -1087,6 +1086,147 @@ void update_pulse_generation()
     // clear trig flag
     trig_type = 0;
 }
+
+
+void drawRoundedRectangle(u16 bbx,u16 bby)
+{
+    u16 bx=bbx;
+    u16 by=bby;
+
+    LCD_Fill(bx+12,by+0,bx+80,by+2, PALE_SILVER);
+    LCD_Fill(bx+0,by+12,bx+2,by+38, PALE_SILVER);
+    LCD_Fill(bx+12,by+49,bx+80,by+51, PALE_SILVER);
+    LCD_Fill(bx+91,by+12,bx+93,by+38, PALE_SILVER);
+
+    LCD_Fill(bx+0,by+10,bx+2,by+12, PALE_SILVER);
+    LCD_Fill(bx+1,by+7,bx+3,by+9, PALE_SILVER);
+    LCD_Fill(bx+2,by+5,bx+4,by+6, PALE_SILVER);
+    LCD_Fill(bx+4,by+7,bx+4,by+7, PALE_SILVER);
+    LCD_Fill(bx+3,by+4,bx+4,by+4, PALE_SILVER);
+    LCD_Fill(bx+4,by+3,bx+4,by+3, PALE_SILVER);
+    LCD_Fill(bx+5,by+5,bx+5,by+5, PALE_SILVER);
+    LCD_Fill(bx+5,by+2,bx+6,by+4, PALE_SILVER);
+    LCD_Fill(bx+7,by+4,bx+7,by+4, PALE_SILVER);
+    LCD_Fill(bx+7,by+1,bx+9,by+3, PALE_SILVER);
+    LCD_Fill(bx+10,by+0,bx+12,by+2, PALE_SILVER);
+
+    bx=bbx+81;
+    LCD_Fill(bx+0,by+0,bx+2,by+2, PALE_SILVER);
+    LCD_Fill(bx+3,by+1,bx+5,by+3, PALE_SILVER);
+    LCD_Fill(bx+5,by+4,bx+5,by+4, PALE_SILVER);
+    LCD_Fill(bx+6,by+2,bx+7,by+4, PALE_SILVER);
+    LCD_Fill(bx+7,by+5,bx+7,by+5, PALE_SILVER);
+    LCD_Fill(bx+8,by+3,bx+8,by+4, PALE_SILVER);
+    LCD_Fill(bx+8,by+5,bx+10,by+6, PALE_SILVER);
+    LCD_Fill(bx+9,by+4,bx+9,by+4, PALE_SILVER);
+    LCD_Fill(bx+8,by+7,bx+8,by+7, PALE_SILVER);
+    LCD_Fill(bx+9,by+7,bx+11,by+9, PALE_SILVER);
+    LCD_Fill(bx+10,by+10,bx+12,by+12, PALE_SILVER);
+
+    bx=bbx+81;
+    by=bby+39;
+    LCD_Fill(bx+10,by+0,bx+12,by+2, PALE_SILVER);
+    LCD_Fill(bx+9,by+3,bx+11,by+5, PALE_SILVER);
+    LCD_Fill(bx+8,by+5,bx+8,by+5, PALE_SILVER);
+    LCD_Fill(bx+8,by+6,bx+10,by+7, PALE_SILVER);
+    LCD_Fill(bx+7,by+7,bx+7,by+7, PALE_SILVER);
+    LCD_Fill(bx+8,by+8,bx+9,by+8, PALE_SILVER);
+    LCD_Fill(bx+8,by+9,bx+8,by+9, PALE_SILVER);
+    LCD_Fill(bx+6,by+8,bx+7,by+10, PALE_SILVER);
+    LCD_Fill(bx+5,by+8,bx+5,by+8, PALE_SILVER);
+    LCD_Fill(bx+3,by+9,bx+5,by+11, PALE_SILVER);
+    LCD_Fill(bx+0,by+10,bx+2,by+12, PALE_SILVER);
+
+    bx=bbx+0;
+    by=bby+39;
+    LCD_Fill(bx+0,by+0,bx+2,by+2, PALE_SILVER);
+    LCD_Fill(bx+1,by+3,bx+3,by+5, PALE_SILVER);
+    LCD_Fill(bx+4,by+5,bx+4,by+5, PALE_SILVER);
+    LCD_Fill(bx+2,by+6,bx+4,by+7, PALE_SILVER);
+    LCD_Fill(bx+5,by+7,bx+5,by+7, PALE_SILVER);
+    LCD_Fill(bx+3,by+8,bx+3,by+8, PALE_SILVER);
+    LCD_Fill(bx+4,by+8,bx+4,by+9, PALE_SILVER);
+    LCD_Fill(bx+5,by+8,bx+6,by+10, PALE_SILVER);
+    LCD_Fill(bx+7,by+8,bx+7,by+8, PALE_SILVER);
+    LCD_Fill(bx+7,by+9,bx+9,by+11, PALE_SILVER);
+    LCD_Fill(bx+10,by+10,bx+12,by+12, PALE_SILVER);
+
+    bx=bbx;
+    by=bby;
+    LCD_Fill(bx+12,by+3,bx+81,by+48, STEEL_BLUE);
+    LCD_Fill(bx+3,by+12,bx+12,by+39, STEEL_BLUE);
+    LCD_Fill(bx+81,by+12,bx+90,by+39, STEEL_BLUE);
+
+    LCD_Fill(bx+6,by+6,bx+12,by+12, STEEL_BLUE);
+    LCD_Fill(bx+6,by+5,bx+7,by+5, STEEL_BLUE);
+    LCD_Fill(bx+8,by+4,bx+9,by+5, STEEL_BLUE);
+    LCD_Fill(bx+10,by+3,bx+12,by+5, STEEL_BLUE);
+    LCD_Fill(bx+5,by+6,bx+5,by+7, STEEL_BLUE);
+    LCD_Fill(bx+4,by+8,bx+5,by+9, STEEL_BLUE);
+    LCD_Fill(bx+3,by+10,bx+5,by+12, STEEL_BLUE);
+
+    bx=bbx+81;
+    LCD_Fill(bx+0,by+6,bx+6,by+12, STEEL_BLUE);
+    LCD_Fill(bx+0,by+3,bx+2,by+5, STEEL_BLUE);
+    LCD_Fill(bx+3,by+4,bx+4,by+5, STEEL_BLUE);
+    LCD_Fill(bx+5,by+5,bx+6,by+5, STEEL_BLUE);
+    LCD_Fill(bx+7,by+6,bx+7,by+7, STEEL_BLUE);
+    LCD_Fill(bx+7,by+8,bx+8,by+9, STEEL_BLUE);
+    LCD_Fill(bx+7,by+10,bx+9,by+12, STEEL_BLUE);
+
+    bx=bbx+81;
+    by=bby+39;
+    LCD_Fill(bx+0,by+0,bx+6,by+6, STEEL_BLUE);
+    LCD_Fill(bx+0,by+7,bx+2,by+9, STEEL_BLUE);
+    LCD_Fill(bx+3,by+7,bx+4,by+8, STEEL_BLUE);
+    LCD_Fill(bx+5,by+7,bx+6,by+7, STEEL_BLUE);
+    LCD_Fill(bx+7,by+5,bx+7,by+6, STEEL_BLUE);
+    LCD_Fill(bx+7,by+3,bx+8,by+4, STEEL_BLUE);
+    LCD_Fill(bx+7,by+0,bx+9,by+2, STEEL_BLUE);
+
+    bx=bbx;
+    by=bby+39;
+    LCD_Fill(bx+6,by+0,bx+12,by+6, STEEL_BLUE);
+    LCD_Fill(bx+3,by+0,bx+5,by+2, STEEL_BLUE);
+    LCD_Fill(bx+4,by+3,bx+5,by+4, STEEL_BLUE);
+    LCD_Fill(bx+5,by+5,bx+5,by+6, STEEL_BLUE);
+    LCD_Fill(bx+6,by+7,bx+7,by+7, STEEL_BLUE);
+    LCD_Fill(bx+8,by+7,bx+9,by+8, STEEL_BLUE);
+    LCD_Fill(bx+10,by+7,bx+12,by+9, STEEL_BLUE);
+
+    // 四角
+    bx=bbx;
+    by=bby;
+    LCD_Fill(bx+0,by+1,bx+0,by+9, DARK_GRAY);
+    LCD_Fill(bx+1,by+0,bx+1,by+6, DARK_GRAY);
+    LCD_Fill(bx+2,by+0,bx+9,by+0, DARK_GRAY);
+    LCD_Fill(bx+2,by+1,bx+6,by+1, DARK_GRAY);
+
+    bx=bbx+81;
+    by=bby;
+    LCD_Fill(bx+3,by+0,bx+11,by+0, DARK_GRAY);
+    LCD_Fill(bx+6,by+1,bx+12,by+1, DARK_GRAY);
+    LCD_Fill(bx+11,by+2,bx+11,by+6, DARK_GRAY);
+    LCD_Fill(bx+12,by+2,bx+12,by+9, DARK_GRAY);
+
+    bx=bbx+81;
+    by=bby+39;
+    LCD_Fill(bx+3,by+12,bx+10,by+12, DARK_GRAY);
+    LCD_Fill(bx+6,by+11,bx+10,by+11, DARK_GRAY);
+    LCD_Fill(bx+11,by+6,bx+11,by+12, DARK_GRAY);
+    LCD_Fill(bx+12,by+3,bx+12,by+11, DARK_GRAY);
+
+    bx=bbx;
+    by=bby+39;
+    LCD_Fill(bx+0,by+3,bx+0,by+10, DARK_GRAY);
+    LCD_Fill(bx+1,by+6,bx+1,by+10, DARK_GRAY);
+    LCD_Fill(bx+0,by+11,bx+6,by+11, DARK_GRAY);
+    LCD_Fill(bx+1,by+12,bx+9,by+12, DARK_GRAY);
+
+
+
+}
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -1190,6 +1330,71 @@ int main(void)
 //    printf("type:  %lu\n", dataCfg1.type);
 //    printf("count: %lu\n", dataCfg1.count);
 //    printf("flag:  %lu\n", dataCfg1.flag);
+
+    drawRoundedRectangle(0*96,320-1*54);
+    drawRoundedRectangle(1*96,320-1*54);
+    drawRoundedRectangle(2*96,320-1*54);
+    drawRoundedRectangle(3*96,320-1*54);
+    drawRoundedRectangle(4*96,320-1*54);
+
+    drawRoundedRectangle(0*96,320-2*54);
+    drawRoundedRectangle(1*96,320-2*54);
+    drawRoundedRectangle(2*96,320-2*54);
+    drawRoundedRectangle(3*96,320-2*54);
+    drawRoundedRectangle(4*96,320-2*54);
+
+    LCD_Fill(0,30,384,30+180, DARK_RED_BROWN);
+    POINT_COLOR = GOLDEN_YELLOW;
+    LCD_DrawRectangle(0,30,384,30+180);
+    LCD_DrawRectangle(1,30+1,384-1,30+180-1);
+    LCD_DrawRectangle(2,30+2,384-2,30+180-2);
+    LCD_Fill(0,30,54,30+40, GOLDEN_YELLOW);
+
+    LCD_Fill(384,30,384+96,30+60, DARK_BROWN);
+    LCD_Fill(384,30+44,384+22,30+60, OLIVE_GREEN);
+    POINT_COLOR = OLIVE_GREEN;
+    LCD_DrawRectangle(384,30,384+96,30+60);
+    LCD_DrawRectangle(384+1,30+1,384+96-1,30+60-1);
+    LCD_DrawRectangle(384+2,30+2,384+96-2,30+60-2);
+
+
+    LCD_Fill(384,90,384+96,90+60, MIDNIGHT_BLUE);
+    LCD_Fill(384,90+44,384+22,90+60, COBALT_BLUE);
+    POINT_COLOR = COBALT_BLUE;
+    LCD_DrawRectangle(384,90,384+96,90+60);
+    LCD_DrawRectangle(384+1,90+1,384+96-1,90+60-1);
+    LCD_DrawRectangle(384+2,90+2,384+96-2,90+60-2);
+
+    LCD_Fill(384,150,384+96,150+60, CRIMSON_RED);
+    LCD_Fill(384,150+44,384+22,150+60, CORAL_PINK);
+    POINT_COLOR = CORAL_PINK;
+    LCD_DrawRectangle(384,150,384+96,150+60);
+    LCD_DrawRectangle(384+1,150+1,384+96-1,150+60-1);
+    LCD_DrawRectangle(384+2,150+2,384+96-2,150+60-2);
+
+    POINT_COLOR=SAGE_GREEN;
+    LCD_DrawLine(3,154,380,154);
+    LCD_DrawLine(3,168,380,168);
+    LCD_DrawLine(3,181,380,181);
+    LCD_DrawLine(3,194,380,194);
+
+    POINT_COLOR=LIME_GREEN;
+    LCD_Draw_Circle(12,181,5);
+    LCD_Fill(12,181-1,90,181, LIME_GREEN);
+    uint16_t x0=91;
+    uint16_t y0=170;
+    LCD_Fill(x0,y0+11,x0+0,y0+2, LIME_GREEN);
+    LCD_Fill(x0+0,y0+10,x0+5,y0+10, LIME_GREEN);
+    LCD_Fill(x0+3,y0+9,x0+6,y0+9, LIME_GREEN);
+    LCD_Fill(x0+5,y0+8,x0+7,y0+8, LIME_GREEN);
+    LCD_Fill(x0+7,y0+7,x0+8,y0+7, LIME_GREEN);
+    LCD_Fill(x0+8,y0+6,x0+9,y0+6, LIME_GREEN);
+    LCD_Fill(x0+8,y0+5,x0+10,y0+5, LIME_GREEN);
+    LCD_Fill(x0+9,y0+4,x0+10,y0+4, LIME_GREEN);
+    LCD_Fill(x0+9,y0+3,x0+10,y0+3, LIME_GREEN);
+    LCD_Fill(x0+10,y0+2,x0+11,y0+2, LIME_GREEN);
+    LCD_Fill(x0+10,y0+1,x0+11,y0+1, LIME_GREEN);
+    LCD_Fill(x0+10,y0+0,x0+11,y0+0, LIME_GREEN);
 
   /* USER CODE END 2 */
 
