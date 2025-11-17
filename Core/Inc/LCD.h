@@ -114,4 +114,25 @@ void Show_Float_2(uint16_t x, uint16_t y, float value,uint8_t size,uint8_t mode)
 
 void LCD_Draw_Circle(u16 x0,u16 y0,uint8_t r);
 void LCD_Draw_Ring(u16 x0, u16 y0, u16 r, u16 width);
+
+void LCD_ShowHeitiChar2010(uint16_t x, uint16_t y, char ch);
+void LCD_ShowHeitiString2010(uint16_t x, uint16_t y, const char *str);
+void LCD_ShowSongtiChar2010(uint16_t x, uint16_t y, char ch);
+void LCD_ShowSongtiString2010(uint16_t x, uint16_t y, const char *str);
+
+void LCD_ShowHeitiChar2412(uint16_t x, uint16_t y, char ch);
+void LCD_ShowHeitiString2412(uint16_t x, uint16_t y, const char *str);
+
+void LCD_ShowSongtiChar1206(uint16_t x, uint16_t y, char ch);
+void LCD_ShowSongtiString1206(uint16_t x, uint16_t y, const char *str);
+
+void LCD_ShowSongtiChar1407(uint16_t x, uint16_t y, char ch);
+void LCD_ShowSongtiString1407(uint16_t x, uint16_t y, const char *str);
+
+void LCD_ShowSongtiChar2814(uint16_t x, uint16_t y, char ch);
+void LCD_ShowSongtiString2814(uint16_t x, uint16_t y, const char *str);
+
+void LCD_ShowHeitiChar2814(uint16_t x, uint16_t y, char ch);
+void LCD_ShowHeitiString2814(uint16_t x, uint16_t y, const char *str);
+
 #endif //ST7796_SPI_LCD_H

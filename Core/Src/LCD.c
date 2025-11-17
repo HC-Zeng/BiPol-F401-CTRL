@@ -575,3 +575,381 @@ void LCD_Draw_Circle(u16 x0,u16 y0,u8 r)
     }
 }
 
+void LCD_ShowHeitiChar2010(uint16_t x, uint16_t y, char ch)
+{
+    uint8_t idx = 0;
+    switch(ch) {
+        case '0': idx = 0; break;
+        case '1': idx = 1; break;
+        case '2': idx = 2; break;
+        case '3': idx = 3; break;
+        case '4': idx = 4; break;
+        case '5': idx = 5; break;
+        case '6': idx = 6; break;
+        case '7': idx = 7; break;
+        case '8': idx = 8; break;
+        case '9': idx = 9; break;
+        case 'A': idx = 10; break;
+        case 'B': idx = 11; break;
+        case 'C': idx = 12; break;
+        case 'D': idx = 13; break;
+        case 'E': idx = 14; break;
+        case 'F': idx = 15; break;
+        case 'G': idx = 16; break;
+        case 'H': idx = 17; break;
+        case 'I': idx = 18; break;
+        case 'J': idx = 19; break;
+        case 'K': idx = 20; break;
+        case 'L': idx = 21; break;
+        case 'M': idx = 22; break;
+        case 'N': idx = 23; break;
+        case 'O': idx = 24; break;
+        case 'P': idx = 25; break;
+        case 'Q': idx = 26; break;
+        case 'R': idx = 27; break;
+        case 'S': idx = 28; break;
+        case 'T': idx = 29; break;
+        case 'U': idx = 30; break;
+        case 'V': idx = 31; break;
+        case 'W': idx = 32; break;
+        case 'X': idx = 33; break;
+        case 'Y': idx = 34; break;
+        case 'Z': idx = 35; break;
+        case '/': idx = 36; break;
+        case '.': idx = 37; break;
+        case ':': idx = 38; break;
+        default: idx = 255; break; // 无效字符返回255
+    }
+    uint16_t temp;
+    for(uint8_t i=0;i<20;i++)
+    {
+        temp = (Heiti_2010[idx][2 * i + 1] << 8) + (Heiti_2010[idx][2 * i]);
+        for(uint8_t j=0;j<10;j++)
+        {
+            if(temp&0x0001)
+            {
+                LCD_Fast_DrawPoint(x+j,y+i,POINT_COLOR);
+            }
+            temp>>=1;
+        }
+    }
+}
+
+void LCD_ShowHeitiString2010(uint16_t x, uint16_t y, const char *str)
+{
+    uint16_t current_x = x;
+
+    // 遍历字符串中的每个字符
+    while (*str != '\0') {
+        LCD_ShowHeitiChar2010(current_x, y, *str);
+        current_x += 10;  // 每个字符宽度为10像素，根据实际情况调整
+        str++;  // 移动到下一个字符
+    }
+}
+
+void LCD_ShowSongtiChar2010(uint16_t x, uint16_t y, char ch) {
+    uint8_t idx = 0;
+    switch(ch) {
+        case '0': idx = 0; break;
+        case '1': idx = 1; break;
+        case '2': idx = 2; break;
+        case '3': idx = 3; break;
+        case '4': idx = 4; break;
+        case '5': idx = 5; break;
+        case '6': idx = 6; break;
+        case '7': idx = 7; break;
+        case '8': idx = 8; break;
+        case '9': idx = 9; break;
+        case 'A': idx = 10; break;
+        case 'B': idx = 11; break;
+        case 'C': idx = 12; break;
+        case 'D': idx = 13; break;
+        case 'E': idx = 14; break;
+        case 'F': idx = 15; break;
+        case 'G': idx = 16; break;
+        case 'H': idx = 17; break;
+        case 'I': idx = 18; break;
+        case 'J': idx = 19; break;
+        case 'K': idx = 20; break;
+        case 'L': idx = 21; break;
+        case 'M': idx = 22; break;
+        case 'N': idx = 23; break;
+        case 'O': idx = 24; break;
+        case 'P': idx = 25; break;
+        case 'Q': idx = 26; break;
+        case 'R': idx = 27; break;
+        case 'S': idx = 28; break;
+        case 'T': idx = 29; break;
+        case 'U': idx = 30; break;
+        case 'V': idx = 31; break;
+        case 'W': idx = 32; break;
+        case 'X': idx = 33; break;
+        case 'Y': idx = 34; break;
+        case 'Z': idx = 35; break;
+        case '/': idx = 36; break;
+        case '.': idx = 37; break;
+        case ':': idx = 38; break;
+        case 'n': idx = 39; break;
+        case 't': idx = 40; break;
+        default: idx = 255; break; // 无效字符返回255
+    }
+    uint16_t temp;
+    for(uint8_t i=0;i<20;i++)
+    {
+        temp = (Songti_2010[idx][2 * i + 1] << 8) + (Songti_2010[idx][2 * i]);
+        for(uint8_t j=0;j<10;j++)
+        {
+            if(temp&0x0001)
+            {
+                LCD_Fast_DrawPoint(x+j,y+i,POINT_COLOR);
+            }
+            temp>>=1;
+        }
+    }
+}
+
+void LCD_ShowSongtiString2010(uint16_t x, uint16_t y, const char *str)
+{
+    uint16_t current_x = x;
+
+    // 遍历字符串中的每个字符
+    while (*str != '\0') {
+        LCD_ShowSongtiChar2010(current_x, y, *str);
+        current_x += 10;  // 每个字符宽度为10像素，根据实际情况调整
+        str++;  // 移动到下一个字符
+    }
+}
+
+void LCD_ShowHeitiChar2412(uint16_t x, uint16_t y, char ch) {
+    uint8_t idx = 0;
+    switch(ch) {
+        case 'A': idx = 0; break;
+        case 'B': idx = 1; break;
+        case 'C': idx = 2; break;
+        case 'D': idx = 3; break;
+        case 'E': idx = 4; break;
+        case 'F': idx = 5; break;
+        case 'G': idx = 6; break;
+        case 'H': idx = 7; break;
+        case 'I': idx = 8; break;
+        case 'J': idx = 9; break;
+        case 'K': idx = 10; break;
+        case 'L': idx = 11; break;
+        case 'M': idx = 12; break;
+        case 'N': idx = 13; break;
+        case 'O': idx = 14; break;
+        case 'P': idx = 15; break;
+        case 'Q': idx = 16; break;
+        case 'R': idx = 17; break;
+        case 'S': idx = 18; break;
+        case 'T': idx = 19; break;
+        case 'U': idx = 20; break;
+        case 'V': idx = 21; break;
+        case 'W': idx = 22; break;
+        case 'X': idx = 23; break;
+        case 'Y': idx = 24; break;
+        case 'Z': idx = 25; break;
+        case '1': idx = 26; break;
+        case '2': idx = 27; break;
+        case '3': idx = 28; break;
+        case '4': idx = 29; break;
+        case '5': idx = 30; break;
+        case '6': idx = 31; break;
+        case '7': idx = 32; break;
+        case '8': idx = 33; break;
+        case '9': idx = 34; break;
+        case '0': idx = 35; break;
+        default: idx = 255; break; // 无效字符返回255
+    }
+    uint16_t temp;
+    for(uint8_t i=0;i<24;i++)
+    {
+        temp = (Heiti_2412[idx][2 * i + 1] << 8) + (Heiti_2412[idx][2 * i]);
+        for(uint8_t j=0;j<12;j++)
+        {
+            if(temp&0x0001)
+            {
+                LCD_Fast_DrawPoint(x+j,y+i,POINT_COLOR);
+            }
+            temp>>=1;
+        }
+    }
+}
+
+void LCD_ShowHeitiString2412(uint16_t x, uint16_t y, const char *str)
+{
+    uint16_t current_x = x;
+
+    // 遍历字符串中的每个字符
+    while (*str != '\0') {
+        LCD_ShowHeitiChar2412(current_x, y, *str);
+        current_x += 12;  // 每个字符宽度为12像素，根据实际情况调整
+        str++;  // 移动到下一个字符
+    }
+}
+
+void LCD_ShowSongtiChar1206(uint16_t x, uint16_t y, char ch) {
+    uint8_t idx = 0;
+    switch(ch) {
+        case '1': idx = 0; break;
+        case '2': idx = 1; break;
+        default: idx = 255; break; // 无效字符返回255
+    }
+    uint16_t temp;
+    for(uint8_t i=0;i<12;i++)
+    {
+        temp = Songti_1206[idx][i];
+        for(uint8_t j=0;j<8;j++)
+        {
+            if(temp&0x01)
+            {
+                LCD_Fast_DrawPoint(x+j,y+i,POINT_COLOR);
+            }
+            temp>>=1;
+        }
+    }
+}
+
+void LCD_ShowSongtiString1206(uint16_t x, uint16_t y, const char *str)
+{
+    uint16_t current_x = x;
+
+    // 遍历字符串中的每个字符
+    while (*str != '\0') {
+        LCD_ShowSongtiChar1206(current_x, y, *str);
+        current_x += 6;  // 每个字符宽度为10像素，根据实际情况调整
+        str++;  // 移动到下一个字符
+    }
+}
+
+void LCD_ShowSongtiChar1407(uint16_t x, uint16_t y, char ch) {
+    uint8_t idx = 0;
+    switch(ch) {
+        case '1': idx = 0; break;
+        case '2': idx = 1; break;
+        case '3': idx = 2; break;
+        case '4': idx = 3; break;
+        case '5': idx = 4; break;
+        case '6': idx = 5; break;
+        case '7': idx = 6; break;
+        case '8': idx = 7; break;
+        case '9': idx = 8; break;
+        case '0': idx = 9; break;
+        case '.': idx = 10; break;
+        case 'V': idx = 11; break;
+        default: idx = 255; break; // 无效字符返回255
+    }
+    uint16_t temp;
+    for(uint8_t i=0;i<14;i++)
+    {
+        temp = Songti_1407[idx][i];
+        for(uint8_t j=0;j<7;j++)
+        {
+            if(temp&0x01)
+            {
+                LCD_Fast_DrawPoint(x+j,y+i,POINT_COLOR);
+            }
+            temp>>=1;
+        }
+    }
+}
+
+void LCD_ShowSongtiString1407(uint16_t x, uint16_t y, const char *str)
+{
+    uint16_t current_x = x;
+
+    // 遍历字符串中的每个字符
+    while (*str != '\0') {
+        LCD_ShowSongtiChar1407(current_x, y, *str);
+        current_x += 8;  // 每个字符宽度为10像素，根据实际情况调整
+        str++;  // 移动到下一个字符
+    }
+}
+
+void LCD_ShowSongtiChar2814(uint16_t x, uint16_t y, char ch) {
+    uint8_t idx = 0;
+    switch(ch) {
+        case '1': idx = 0; break;
+        case '2': idx = 1; break;
+        case '3': idx = 2; break;
+        case '4': idx = 3; break;
+        case '5': idx = 4; break;
+        case '6': idx = 5; break;
+        case '7': idx = 6; break;
+        case '8': idx = 7; break;
+        case '9': idx = 8; break;
+        case '0': idx = 9; break;
+        case '.': idx = 10; break;
+        case 'V': idx = 11; break;
+        default: idx = 255; break; // 无效字符返回255
+    }
+    uint16_t temp;
+    for(uint8_t i=0;i<28;i++)
+    {
+        temp = (Songti_2814[idx][2 * i + 1] << 8) + (Songti_2814[idx][2 * i]);
+        for(uint8_t j=0;j<14;j++)
+        {
+            if(temp&0x0001)
+            {
+                LCD_Fast_DrawPoint(x+j,y+i,POINT_COLOR);
+            }
+            temp>>=1;
+        }
+    }
+}
+
+void LCD_ShowSongtiString2814(uint16_t x, uint16_t y, const char *str)
+{
+    uint16_t current_x = x;
+
+    // 遍历字符串中的每个字符
+    while (*str != '\0') {
+        LCD_ShowSongtiChar2814(current_x, y, *str);
+        current_x += 14;  // 每个字符宽度为10像素，根据实际情况调整
+        str++;  // 移动到下一个字符
+    }
+}
+
+void LCD_ShowHeitiChar2814(uint16_t x, uint16_t y, char ch) {
+    uint8_t idx = 0;
+    switch(ch) {
+        case '1': idx = 0; break;
+        case '2': idx = 1; break;
+        case '3': idx = 2; break;
+        case '4': idx = 3; break;
+        case '5': idx = 4; break;
+        case '6': idx = 5; break;
+        case '7': idx = 6; break;
+        case '8': idx = 7; break;
+        case '9': idx = 8; break;
+        case '0': idx = 9; break;
+        case '.': idx = 10; break;
+        case 'V': idx = 11; break;
+        default: idx = 255; break; // 无效字符返回255
+    }
+    uint16_t temp;
+    for(uint8_t i=0;i<28;i++)
+    {
+        temp = (Heiti_2814[idx][2 * i + 1] << 8) + (Heiti_2814[idx][2 * i]);
+        for(uint8_t j=0;j<14;j++)
+        {
+            if(temp&0x0001)
+            {
+                LCD_Fast_DrawPoint(x+j,y+i,POINT_COLOR);
+            }
+            temp>>=1;
+        }
+    }
+}
+
+void LCD_ShowHeitiString2814(uint16_t x, uint16_t y, const char *str)
+{
+    uint16_t current_x = x;
+
+    // 遍历字符串中的每个字符
+    while (*str != '\0') {
+        LCD_ShowHeitiChar2814(current_x, y, *str);
+        current_x += 14;  // 每个字符宽度为10像素，根据实际情况调整
+        str++;  // 移动到下一个字符
+    }
+}

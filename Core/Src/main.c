@@ -26,12 +26,14 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "lcd.h"
 #include "flash_store.h"
 #include "debug_printf.h"
+#include "ui.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,7 +46,7 @@ PUTCHAR_PROTOTYPE
 }
 #endif
 
-volatile uint32_t timer_overflow_count = 0;  // 溢出次数�??????????????32位扩展）
+volatile uint32_t timer_overflow_count = 0;  // 溢出次数�???????????????32位扩展）
 
 uint64_t Get_Global_Time_us(void) {
     uint32_t overflow, counter;
@@ -52,7 +54,7 @@ uint64_t Get_Global_Time_us(void) {
         overflow = timer_overflow_count;
         counter = __HAL_TIM_GET_COUNTER(&htim2);
     } while (overflow != timer_overflow_count); // 无锁校验
-    return ((uint64_t)overflow<<32) | counter; // 组合�??????????????64位时间戳
+    return ((uint64_t)overflow<<32) | counter; // 组合�???????????????64位时间戳
 }
 
 void didi()
@@ -81,7 +83,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-/* 系统状�?�枚�?????????? */
+/* 系统状�?�枚�??????????? */
 typedef enum {
     STATE_INIT = 0,
     STATE_CHARGE,
@@ -93,7 +95,7 @@ typedef enum {
 /* 全局变量 */
 SystemState g_state = STATE_INIT;
 
-uint32_t g_adc_buffer[5];            // ADC采样缓冲�??????????
+uint32_t g_adc_buffer[5];            // ADC采样缓冲�???????????
 uint16_t g_target_voltage_mv = 0;    // 目标电压 (mV)
 uint16_t g_cap_voltage_mv[4] = {0};  // 电容电压 (mV)
 uint16_t g_temp = 0;                 // 温度电压 (mv)
@@ -152,7 +154,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
 #define ALPHA 0.1f
 static uint16_t filtered_voltage[4] = {0};
 
-/* 更新电压测量并处理串口输�????????? */
+/* 更新电压测量并处理串口输�?????????? */
 void UpdateVoltageMeasurements(void) {
 
     // 1. 更新目标电压
@@ -166,7 +168,7 @@ void UpdateVoltageMeasurements(void) {
         float adc_voltage = g_adc_buffer[i+1] * 3.3f / 4096.0f;
         uint16_t raw_voltage = (uint16_t)(adc_voltage * (16.0f / 10.0f) * 1000);
 
-        // �?????????阶低通滤�?????????
+        // �??????????阶低通滤�??????????
         if(filtered_voltage[i] == 0) {
             // 第一次计算，直接赋�??
             filtered_voltage[i] = raw_voltage;
@@ -198,7 +200,7 @@ void SystemStateMachine(void) {
     uint16_t avg_voltage = 0;
     uint8_t max_id = 0;
 
-    // 计算统计�???????
+    // 计算统计�????????
     for(i = 0; i < 4; i++) {
         if(g_cap_voltage_mv[i] > max_voltage)
         {
@@ -220,7 +222,7 @@ void SystemStateMachine(void) {
             break;
 
         case STATE_CHARGE: {
-            // 打开充电�???????�???????
+            // 打开充电�????????�????????
             HAL_GPIO_WritePin(CTR_SW_GPIO_Port, CTR_SW_Pin, GPIO_PIN_SET);
             // 禁止均衡
             HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, GPIO_PIN_RESET);
@@ -228,7 +230,7 @@ void SystemStateMachine(void) {
             HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, GPIO_PIN_RESET);
             HAL_GPIO_WritePin(CTR_C4_GPIO_Port, CTR_C4_Pin, GPIO_PIN_RESET);
 
-            // 平均电压大于设定值的80%，开始均�???????
+            // 平均电压大于设定值的80%，开始均�????????
             if(avg_voltage > g_target_voltage_mv*0.3) {
                 g_state = STATE_BALANCE;
             }
@@ -236,31 +238,31 @@ void SystemStateMachine(void) {
         }
 
         case STATE_BALANCE: {
-            // 打开充电�???????�???????
+            // 打开充电�????????�????????
             HAL_GPIO_WritePin(CTR_SW_GPIO_Port, CTR_SW_Pin, GPIO_PIN_SET);
 
             // 均衡控制策略
             uint8_t discharge_flags[4] = {0};
 
-            // 四路电压的最大�?�减去最小�?�大于平衡阈值，�???????始均衡，把最大电压的电容放电
+            // 四路电压的最大�?�减去最小�?�大于平衡阈值，�????????始均衡，把最大电压的电容放电
             if(max_voltage-min_voltage > BALANCE_THRESHOLD)
             {
                 discharge_flags[max_id] = 1;
             }
 
-            // 设置放电管状�???????
+            // 设置放电管状�????????
             HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, discharge_flags[0]);
             HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, discharge_flags[1]);
             HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, discharge_flags[2]);
             HAL_GPIO_WritePin(CTR_C4_GPIO_Port, CTR_C4_Pin, discharge_flags[3]);
 
-            // 四路�???????大电压小于设定�?�的80%，转到充�???????
+            // 四路�????????大电压小于设定�?�的80%，转到充�????????
             if(max_voltage<g_target_voltage_mv*0.8)
             {
                 g_state = STATE_CHARGE;
             }
 
-            // 平均电压大于设定值，即进入保�???????
+            // 平均电压大于设定值，即进入保�????????
             if(avg_voltage>g_target_voltage_mv) {
                 g_state = STATE_MAINTAIN;
             }
@@ -274,13 +276,13 @@ void SystemStateMachine(void) {
             // 均衡控制策略
             uint8_t discharge_flags[4] = {0};
 
-            // 四路电压的最大�?�减去最小�?�大于平衡阈值，�???????始均衡，把最大电压的电容放电
+            // 四路电压的最大�?�减去最小�?�大于平衡阈值，�????????始均衡，把最大电压的电容放电
             if(max_voltage-min_voltage > BALANCE_THRESHOLD)
             {
                 discharge_flags[max_id] = 1;
             }
 
-            // 设置放电管状�???????
+            // 设置放电管状�????????
             HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, discharge_flags[0] );
             HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, discharge_flags[1] );
             HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, discharge_flags[2] );
@@ -292,7 +294,7 @@ void SystemStateMachine(void) {
                 g_state = STATE_BALANCE;
             }
 
-            // 四路电压�???????小�?�大于设定，转到放电
+            // 四路电压�????????小�?�大于设定，转到放电
             if(min_voltage>g_target_voltage_mv)
             {
                 g_state = STATE_DISCHARGE;
@@ -308,7 +310,7 @@ void SystemStateMachine(void) {
             uint8_t discharge_flags[4] = {0};
             uint8_t all_in_range = 1;
 
-            // 大于设（设定+阈�?�）的全部进行放�???????
+            // 大于设（设定+阈�?�）的全部进行放�????????
             for(i = 0; i < 4; i++) {
                 if ((g_cap_voltage_mv[i]>=g_target_voltage_mv) && (g_cap_voltage_mv[i] - g_target_voltage_mv > BALANCE_THRESHOLD)) {
                     discharge_flags[i] = 1;
@@ -316,7 +318,7 @@ void SystemStateMachine(void) {
                 }
             }
 
-            // 设置放电管状�???????
+            // 设置放电管状�????????
             HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, discharge_flags[0] );
             HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, discharge_flags[1] );
             HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, discharge_flags[2] );
@@ -754,7 +756,7 @@ void show_CH2()
 int numLength(uint32_t num) {
     int len = 0;
 
-    // 处理0的情�???????
+    // 处理0的情�????????
     if (num == 0) {
         return 1;
     }
@@ -764,7 +766,7 @@ int numLength(uint32_t num) {
         num = -num;
     }
 
-    // 通过循环除以10来计算位�???????
+    // 通过循环除以10来计算位�????????
     while (num != 0) {
         len++;
         num /= 10;
@@ -825,24 +827,24 @@ void saveBeforeExit()
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-// 状�?�枚�???????
+// 状�?�枚�????????
 typedef enum {
     IDLE_MODE,      // 空闲状�??
     SELECT_MODE,    // 选择变量状�??
     EDIT_MODE       // 修改变量状�??
 } State;
 
-// 全局状�?�变�???????
+// 全局状�?�变�????????
 State current_state = IDLE_MODE;
 uint8_t selected_index = 5;  // 当前选中的变量索引：0,1,2,3,4,5 ==> U, PSQR, CH1, COOL, CH2, STORAGE
-uint32_t prev_cnt = 2000000000;  // 初始值与你给的g_cnt初始值相�???????
-uint64_t last_activity_time = 0; // �???????后一次活动时间戳
-const uint64_t IDLE_TIMEOUT = 3000000; // 空闲超时时间3�???????
+uint32_t prev_cnt = 2000000000;  // 初始值与你给的g_cnt初始值相�????????
+uint64_t last_activity_time = 0; // �????????后一次活动时间戳
+const uint64_t IDLE_TIMEOUT = 3000000; // 空闲超时时间3�????????
 // 状�?�机处理函数
 void update_state_machine(void) {
     uint64_t current_time = Get_Global_Time_us();
 
-    // �???????查空闲超时（除了IDLE_MODE状�?�外�???????
+    // �????????查空闲超时（除了IDLE_MODE状�?�外�????????
     if (current_state != IDLE_MODE) {
         if (current_time - last_activity_time > IDLE_TIMEOUT) {
             if(current_state==EDIT_MODE)
@@ -864,10 +866,10 @@ void update_state_machine(void) {
         }
     }
 
-    // 计算编码器计数的变化�???????
+    // 计算编码器计数的变化�????????
     int32_t diff = (int32_t)(g_cnt - prev_cnt);
 
-    // 处理按钮事件（如果按钮被按下�???????
+    // 处理按钮事件（如果按钮被按下�????????
     if (g_btn == 1) {
         printf("btn=ON\r\n");
         last_activity_time = current_time; // 更新活动时间
@@ -884,7 +886,7 @@ void update_state_machine(void) {
             draw_edited(selected_index,GREEN,0); // un edit
             show_select_index(selected_index);
         }
-        g_btn = 0;  // 清除按钮状�?�（软件清零�???????
+        g_btn = 0;  // 清除按钮状�?�（软件清零�????????
         return;
     }
 
@@ -898,7 +900,7 @@ void update_state_machine(void) {
             // 在空闲模式下旋转编码器，进入选择模式
             current_state = SELECT_MODE;
         } else if (current_state == SELECT_MODE) {
-            // 在�?�择模式下，旋转编码器改变�?�中的变�???????
+            // 在�?�择模式下，旋转编码器改变�?�中的变�????????
             if (diff > 0) {
                 // 正转
                 selected_index = (selected_index + 1) % 6;
@@ -916,7 +918,7 @@ void update_state_machine(void) {
 //            Show_Float(364,90,(float)123,16,1);
             show_select_index(selected_index);
         } else if (current_state == EDIT_MODE) {
-            // 在编辑模式下，旋转编码器改变当前选中的变量的�???????
+            // 在编辑模式下，旋转编码器改变当前选中的变量的�????????
             switch (selected_index) {
                 case 0: // g_U: 0.0-6.0 v
                     if(diff>0)
@@ -1088,145 +1090,6 @@ void update_pulse_generation()
 }
 
 
-void drawRoundedRectangle(u16 bbx,u16 bby)
-{
-    u16 bx=bbx;
-    u16 by=bby;
-
-    LCD_Fill(bx+12,by+0,bx+80,by+2, PALE_SILVER);
-    LCD_Fill(bx+0,by+12,bx+2,by+38, PALE_SILVER);
-    LCD_Fill(bx+12,by+49,bx+80,by+51, PALE_SILVER);
-    LCD_Fill(bx+91,by+12,bx+93,by+38, PALE_SILVER);
-
-    LCD_Fill(bx+0,by+10,bx+2,by+12, PALE_SILVER);
-    LCD_Fill(bx+1,by+7,bx+3,by+9, PALE_SILVER);
-    LCD_Fill(bx+2,by+5,bx+4,by+6, PALE_SILVER);
-    LCD_Fill(bx+4,by+7,bx+4,by+7, PALE_SILVER);
-    LCD_Fill(bx+3,by+4,bx+4,by+4, PALE_SILVER);
-    LCD_Fill(bx+4,by+3,bx+4,by+3, PALE_SILVER);
-    LCD_Fill(bx+5,by+5,bx+5,by+5, PALE_SILVER);
-    LCD_Fill(bx+5,by+2,bx+6,by+4, PALE_SILVER);
-    LCD_Fill(bx+7,by+4,bx+7,by+4, PALE_SILVER);
-    LCD_Fill(bx+7,by+1,bx+9,by+3, PALE_SILVER);
-    LCD_Fill(bx+10,by+0,bx+12,by+2, PALE_SILVER);
-
-    bx=bbx+81;
-    LCD_Fill(bx+0,by+0,bx+2,by+2, PALE_SILVER);
-    LCD_Fill(bx+3,by+1,bx+5,by+3, PALE_SILVER);
-    LCD_Fill(bx+5,by+4,bx+5,by+4, PALE_SILVER);
-    LCD_Fill(bx+6,by+2,bx+7,by+4, PALE_SILVER);
-    LCD_Fill(bx+7,by+5,bx+7,by+5, PALE_SILVER);
-    LCD_Fill(bx+8,by+3,bx+8,by+4, PALE_SILVER);
-    LCD_Fill(bx+8,by+5,bx+10,by+6, PALE_SILVER);
-    LCD_Fill(bx+9,by+4,bx+9,by+4, PALE_SILVER);
-    LCD_Fill(bx+8,by+7,bx+8,by+7, PALE_SILVER);
-    LCD_Fill(bx+9,by+7,bx+11,by+9, PALE_SILVER);
-    LCD_Fill(bx+10,by+10,bx+12,by+12, PALE_SILVER);
-
-    bx=bbx+81;
-    by=bby+39;
-    LCD_Fill(bx+10,by+0,bx+12,by+2, PALE_SILVER);
-    LCD_Fill(bx+9,by+3,bx+11,by+5, PALE_SILVER);
-    LCD_Fill(bx+8,by+5,bx+8,by+5, PALE_SILVER);
-    LCD_Fill(bx+8,by+6,bx+10,by+7, PALE_SILVER);
-    LCD_Fill(bx+7,by+7,bx+7,by+7, PALE_SILVER);
-    LCD_Fill(bx+8,by+8,bx+9,by+8, PALE_SILVER);
-    LCD_Fill(bx+8,by+9,bx+8,by+9, PALE_SILVER);
-    LCD_Fill(bx+6,by+8,bx+7,by+10, PALE_SILVER);
-    LCD_Fill(bx+5,by+8,bx+5,by+8, PALE_SILVER);
-    LCD_Fill(bx+3,by+9,bx+5,by+11, PALE_SILVER);
-    LCD_Fill(bx+0,by+10,bx+2,by+12, PALE_SILVER);
-
-    bx=bbx+0;
-    by=bby+39;
-    LCD_Fill(bx+0,by+0,bx+2,by+2, PALE_SILVER);
-    LCD_Fill(bx+1,by+3,bx+3,by+5, PALE_SILVER);
-    LCD_Fill(bx+4,by+5,bx+4,by+5, PALE_SILVER);
-    LCD_Fill(bx+2,by+6,bx+4,by+7, PALE_SILVER);
-    LCD_Fill(bx+5,by+7,bx+5,by+7, PALE_SILVER);
-    LCD_Fill(bx+3,by+8,bx+3,by+8, PALE_SILVER);
-    LCD_Fill(bx+4,by+8,bx+4,by+9, PALE_SILVER);
-    LCD_Fill(bx+5,by+8,bx+6,by+10, PALE_SILVER);
-    LCD_Fill(bx+7,by+8,bx+7,by+8, PALE_SILVER);
-    LCD_Fill(bx+7,by+9,bx+9,by+11, PALE_SILVER);
-    LCD_Fill(bx+10,by+10,bx+12,by+12, PALE_SILVER);
-
-    bx=bbx;
-    by=bby;
-    LCD_Fill(bx+12,by+3,bx+81,by+48, STEEL_BLUE);
-    LCD_Fill(bx+3,by+12,bx+12,by+39, STEEL_BLUE);
-    LCD_Fill(bx+81,by+12,bx+90,by+39, STEEL_BLUE);
-
-    LCD_Fill(bx+6,by+6,bx+12,by+12, STEEL_BLUE);
-    LCD_Fill(bx+6,by+5,bx+7,by+5, STEEL_BLUE);
-    LCD_Fill(bx+8,by+4,bx+9,by+5, STEEL_BLUE);
-    LCD_Fill(bx+10,by+3,bx+12,by+5, STEEL_BLUE);
-    LCD_Fill(bx+5,by+6,bx+5,by+7, STEEL_BLUE);
-    LCD_Fill(bx+4,by+8,bx+5,by+9, STEEL_BLUE);
-    LCD_Fill(bx+3,by+10,bx+5,by+12, STEEL_BLUE);
-
-    bx=bbx+81;
-    LCD_Fill(bx+0,by+6,bx+6,by+12, STEEL_BLUE);
-    LCD_Fill(bx+0,by+3,bx+2,by+5, STEEL_BLUE);
-    LCD_Fill(bx+3,by+4,bx+4,by+5, STEEL_BLUE);
-    LCD_Fill(bx+5,by+5,bx+6,by+5, STEEL_BLUE);
-    LCD_Fill(bx+7,by+6,bx+7,by+7, STEEL_BLUE);
-    LCD_Fill(bx+7,by+8,bx+8,by+9, STEEL_BLUE);
-    LCD_Fill(bx+7,by+10,bx+9,by+12, STEEL_BLUE);
-
-    bx=bbx+81;
-    by=bby+39;
-    LCD_Fill(bx+0,by+0,bx+6,by+6, STEEL_BLUE);
-    LCD_Fill(bx+0,by+7,bx+2,by+9, STEEL_BLUE);
-    LCD_Fill(bx+3,by+7,bx+4,by+8, STEEL_BLUE);
-    LCD_Fill(bx+5,by+7,bx+6,by+7, STEEL_BLUE);
-    LCD_Fill(bx+7,by+5,bx+7,by+6, STEEL_BLUE);
-    LCD_Fill(bx+7,by+3,bx+8,by+4, STEEL_BLUE);
-    LCD_Fill(bx+7,by+0,bx+9,by+2, STEEL_BLUE);
-
-    bx=bbx;
-    by=bby+39;
-    LCD_Fill(bx+6,by+0,bx+12,by+6, STEEL_BLUE);
-    LCD_Fill(bx+3,by+0,bx+5,by+2, STEEL_BLUE);
-    LCD_Fill(bx+4,by+3,bx+5,by+4, STEEL_BLUE);
-    LCD_Fill(bx+5,by+5,bx+5,by+6, STEEL_BLUE);
-    LCD_Fill(bx+6,by+7,bx+7,by+7, STEEL_BLUE);
-    LCD_Fill(bx+8,by+7,bx+9,by+8, STEEL_BLUE);
-    LCD_Fill(bx+10,by+7,bx+12,by+9, STEEL_BLUE);
-
-    // 四角
-    bx=bbx;
-    by=bby;
-    LCD_Fill(bx+0,by+1,bx+0,by+9, DARK_GRAY);
-    LCD_Fill(bx+1,by+0,bx+1,by+6, DARK_GRAY);
-    LCD_Fill(bx+2,by+0,bx+9,by+0, DARK_GRAY);
-    LCD_Fill(bx+2,by+1,bx+6,by+1, DARK_GRAY);
-
-    bx=bbx+81;
-    by=bby;
-    LCD_Fill(bx+3,by+0,bx+11,by+0, DARK_GRAY);
-    LCD_Fill(bx+6,by+1,bx+12,by+1, DARK_GRAY);
-    LCD_Fill(bx+11,by+2,bx+11,by+6, DARK_GRAY);
-    LCD_Fill(bx+12,by+2,bx+12,by+9, DARK_GRAY);
-
-    bx=bbx+81;
-    by=bby+39;
-    LCD_Fill(bx+3,by+12,bx+10,by+12, DARK_GRAY);
-    LCD_Fill(bx+6,by+11,bx+10,by+11, DARK_GRAY);
-    LCD_Fill(bx+11,by+6,bx+11,by+12, DARK_GRAY);
-    LCD_Fill(bx+12,by+3,bx+12,by+11, DARK_GRAY);
-
-    bx=bbx;
-    by=bby+39;
-    LCD_Fill(bx+0,by+3,bx+0,by+10, DARK_GRAY);
-    LCD_Fill(bx+1,by+6,bx+1,by+10, DARK_GRAY);
-    LCD_Fill(bx+0,by+11,bx+6,by+11, DARK_GRAY);
-    LCD_Fill(bx+1,by+12,bx+9,by+12, DARK_GRAY);
-
-
-
-}
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -1280,7 +1143,7 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim2);
   FlashStore_Init();
 
-    // 初始状�?�设�???????
+    // 初始状�?�设�????????
     HAL_GPIO_WritePin(CTR_SW_GPIO_Port, CTR_SW_Pin, GPIO_PIN_RESET); // 关闭充电
     HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, GPIO_PIN_RESET);   // 关闭放电
     HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, GPIO_PIN_RESET);
@@ -1331,17 +1194,17 @@ int main(void)
 //    printf("count: %lu\n", dataCfg1.count);
 //    printf("flag:  %lu\n", dataCfg1.flag);
 
-    drawRoundedRectangle(0*96,320-1*54);
-    drawRoundedRectangle(1*96,320-1*54);
-    drawRoundedRectangle(2*96,320-1*54);
-    drawRoundedRectangle(3*96,320-1*54);
-    drawRoundedRectangle(4*96,320-1*54);
+    Draw_RoundedRectangle(0 * 96, 320 - 1 * 54);
+    Draw_RoundedRectangle(1 * 96, 320 - 1 * 54);
+    Draw_RoundedRectangle(2 * 96, 320 - 1 * 54);
+    Draw_RoundedRectangle(3 * 96, 320 - 1 * 54);
+    Draw_RoundedRectangle(4 * 96, 320 - 1 * 54);
 
-    drawRoundedRectangle(0*96,320-2*54);
-    drawRoundedRectangle(1*96,320-2*54);
-    drawRoundedRectangle(2*96,320-2*54);
-    drawRoundedRectangle(3*96,320-2*54);
-    drawRoundedRectangle(4*96,320-2*54);
+    Draw_RoundedRectangle(0 * 96, 320 - 2 * 54);
+    Draw_RoundedRectangle(1 * 96, 320 - 2 * 54);
+    Draw_RoundedRectangle(2 * 96, 320 - 2 * 54);
+    Draw_RoundedRectangle(3 * 96, 320 - 2 * 54);
+    Draw_RoundedRectangle(4 * 96, 320 - 2 * 54);
 
     LCD_Fill(0,30,384,30+180, DARK_RED_BROWN);
     POINT_COLOR = GOLDEN_YELLOW;
@@ -1378,23 +1241,29 @@ int main(void)
     LCD_DrawLine(3,181,380,181);
     LCD_DrawLine(3,194,380,194);
 
-    POINT_COLOR=LIME_GREEN;
-    LCD_Draw_Circle(12,181,5);
-    LCD_Fill(12,181-1,90,181, LIME_GREEN);
-    uint16_t x0=91;
-    uint16_t y0=170;
-    LCD_Fill(x0,y0+11,x0+0,y0+2, LIME_GREEN);
-    LCD_Fill(x0+0,y0+10,x0+5,y0+10, LIME_GREEN);
-    LCD_Fill(x0+3,y0+9,x0+6,y0+9, LIME_GREEN);
-    LCD_Fill(x0+5,y0+8,x0+7,y0+8, LIME_GREEN);
-    LCD_Fill(x0+7,y0+7,x0+8,y0+7, LIME_GREEN);
-    LCD_Fill(x0+8,y0+6,x0+9,y0+6, LIME_GREEN);
-    LCD_Fill(x0+8,y0+5,x0+10,y0+5, LIME_GREEN);
-    LCD_Fill(x0+9,y0+4,x0+10,y0+4, LIME_GREEN);
-    LCD_Fill(x0+9,y0+3,x0+10,y0+3, LIME_GREEN);
-    LCD_Fill(x0+10,y0+2,x0+11,y0+2, LIME_GREEN);
-    LCD_Fill(x0+10,y0+1,x0+11,y0+1, LIME_GREEN);
-    LCD_Fill(x0+10,y0+0,x0+11,y0+0, LIME_GREEN);
+//    POINT_COLOR=LIME_GREEN;
+//    LCD_Draw_Circle(12,181,5);
+//    LCD_Fill(12,181-1,90,181, LIME_GREEN);
+//    uint16_t x0=91;
+//    uint16_t y0=170;
+//    LCD_Fill(x0,y0+11,x0+0,y0+2, LIME_GREEN);
+//    LCD_Fill(x0+0,y0+10,x0+5,y0+10, LIME_GREEN);
+//    LCD_Fill(x0+3,y0+9,x0+6,y0+9, LIME_GREEN);
+//    LCD_Fill(x0+5,y0+8,x0+7,y0+8, LIME_GREEN);
+//    LCD_Fill(x0+7,y0+7,x0+8,y0+7, LIME_GREEN);
+//    LCD_Fill(x0+8,y0+6,x0+9,y0+6, LIME_GREEN);
+//    LCD_Fill(x0+8,y0+5,x0+10,y0+5, LIME_GREEN);
+//    LCD_Fill(x0+9,y0+4,x0+10,y0+4, LIME_GREEN);
+//    LCD_Fill(x0+9,y0+3,x0+10,y0+3, LIME_GREEN);
+//    LCD_Fill(x0+10,y0+2,x0+11,y0+2, LIME_GREEN);
+//    LCD_Fill(x0+10,y0+1,x0+11,y0+1, LIME_GREEN);
+//    LCD_Fill(x0+10,y0+0,x0+11,y0+0, LIME_GREEN);
+
+    Draw_WaveLine();
+    Draw_StaticText();
+
+
+
 
   /* USER CODE END 2 */
 
