@@ -117,8 +117,8 @@ void LCD_Draw_Ring(u16 x0, u16 y0, u16 r, u16 width);
 
 void LCD_ShowHeitiChar2010(uint16_t x, uint16_t y, char ch);
 void LCD_ShowHeitiString2010(uint16_t x, uint16_t y, const char *str);
-void LCD_ShowSongtiChar2010(uint16_t x, uint16_t y, char ch);
-void LCD_ShowSongtiString2010(uint16_t x, uint16_t y, const char *str);
+void LCD_ShowSongtiChar2010(uint16_t x, uint16_t y, char ch, uint8_t isCover);
+void LCD_ShowSongtiString2010(uint16_t x, uint16_t y, const char *str,uint8_t isCover);
 
 void LCD_ShowHeitiChar2412(uint16_t x, uint16_t y, char ch);
 void LCD_ShowHeitiString2412(uint16_t x, uint16_t y, const char *str);

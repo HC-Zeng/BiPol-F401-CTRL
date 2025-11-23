@@ -647,7 +647,7 @@ void LCD_ShowHeitiString2010(uint16_t x, uint16_t y, const char *str)
     }
 }
 
-void LCD_ShowSongtiChar2010(uint16_t x, uint16_t y, char ch) {
+void LCD_ShowSongtiChar2010(uint16_t x, uint16_t y, char ch, uint8_t isCover) {
     uint8_t idx = 0;
     switch(ch) {
         case '0': idx = 0; break;
@@ -703,18 +703,25 @@ void LCD_ShowSongtiChar2010(uint16_t x, uint16_t y, char ch) {
             {
                 LCD_Fast_DrawPoint(x+j,y+i,POINT_COLOR);
             }
+            else
+            {
+                if(isCover)
+                {
+                    LCD_Fast_DrawPoint(x+j,y+i,BACK_COLOR);
+                }
+            }
             temp>>=1;
         }
     }
 }
 
-void LCD_ShowSongtiString2010(uint16_t x, uint16_t y, const char *str)
+void LCD_ShowSongtiString2010(uint16_t x, uint16_t y, const char *str, uint8_t isCover)
 {
     uint16_t current_x = x;
 
     // 遍历字符串中的每个字符
     while (*str != '\0') {
-        LCD_ShowSongtiChar2010(current_x, y, *str);
+        LCD_ShowSongtiChar2010(current_x, y, *str, isCover);
         current_x += 10;  // 每个字符宽度为10像素，根据实际情况调整
         str++;  // 移动到下一个字符
     }
@@ -848,6 +855,10 @@ void LCD_ShowSongtiChar1407(uint16_t x, uint16_t y, char ch) {
             if(temp&0x01)
             {
                 LCD_Fast_DrawPoint(x+j,y+i,POINT_COLOR);
+            }
+            else
+            {
+                LCD_Fast_DrawPoint(x+j,y+i,BACK_COLOR);
             }
             temp>>=1;
         }

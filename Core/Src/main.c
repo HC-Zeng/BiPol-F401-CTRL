@@ -344,26 +344,28 @@ void update_cap_equalizer()
         preTimestamp = Get_Global_Time_us();
 
         // U1
-        float U1_tem = (float)((float)(g_cap_voltage_mv[0] + g_cap_voltage_mv[1])/1000.f);
+//        float U1_tem = (float)((float)(g_cap_voltage_mv[0] + g_cap_voltage_mv[1])/1000.f);
 
         float UC1 = (float)((float)(g_cap_voltage_mv[0])/1000.f); //for debug
         float UC2 = (float)((float)(g_cap_voltage_mv[1])/1000.f); //for debug
-        Show_Float_2(170,210, UC1,16,0); //for debug
-        Show_Float_2(218,210, UC2,16,0); //for debug
+        ShowC1C2(UC1,UC2);
+//        Show_Float_2(170,210, UC1,16,0); //for debug
+//        Show_Float_2(218,210, UC2,16,0); //for debug
 
-        Show_Float_2(188,242, U1_tem,16,0);
-        Show_Str(222,242,"V",16,0);
+//        Show_Float_2(188,242, U1_tem,16,0);
+//        Show_Str(222,242,"V",16,0);
 
         // U2
-        float U2_tem = (float)((float)(g_cap_voltage_mv[2] + g_cap_voltage_mv[3])/1000.f);
+//        float U2_tem = (float)((float)(g_cap_voltage_mv[2] + g_cap_voltage_mv[3])/1000.f);
 
         float UC3 = (float)((float)(g_cap_voltage_mv[2])/1000.f); //for debug
         float UC4 = (float)((float)(g_cap_voltage_mv[3])/1000.f); //for debug
-        Show_Float_2(326,210, UC3,16,0); //for debug
-        Show_Float_2(374,210, UC4,16,0); //for debug
+        ShowC3C4(UC3,UC4);
+//        Show_Float_2(326,210, UC3,16,0); //for debug
+//        Show_Float_2(374,210, UC4,16,0); //for debug
 
-        Show_Float_2(344,242, U2_tem,16,0);
-        Show_Str(378,242,"V",16,0);
+//        Show_Float_2(344,242, U2_tem,16,0);
+//        Show_Str(378,242,"V",16,0);
     }
 }
 
@@ -777,8 +779,9 @@ int numLength(uint32_t num) {
 
 void show_CNT()
 {
-    POINT_COLOR=GREEN;
-    LCD_ShowNum(406-(4*numLength(g_count)),41,g_count,numLength(g_count),16);// 83ms
+
+//    LCD_ShowNum(406-(4*numLength(g_count)),41,g_count,numLength(g_count),16);// 83ms
+    ShowCnt(g_count);
 }
 
 void show_TYPE()
@@ -1194,76 +1197,17 @@ int main(void)
 //    printf("count: %lu\n", dataCfg1.count);
 //    printf("flag:  %lu\n", dataCfg1.flag);
 
-    Draw_RoundedRectangle(0 * 96, 320 - 1 * 54);
-    Draw_RoundedRectangle(1 * 96, 320 - 1 * 54);
-    Draw_RoundedRectangle(2 * 96, 320 - 1 * 54);
-    Draw_RoundedRectangle(3 * 96, 320 - 1 * 54);
-    Draw_RoundedRectangle(4 * 96, 320 - 1 * 54);
+    initUI();
 
-    Draw_RoundedRectangle(0 * 96, 320 - 2 * 54);
-    Draw_RoundedRectangle(1 * 96, 320 - 2 * 54);
-    Draw_RoundedRectangle(2 * 96, 320 - 2 * 54);
-    Draw_RoundedRectangle(3 * 96, 320 - 2 * 54);
-    Draw_RoundedRectangle(4 * 96, 320 - 2 * 54);
-
-    LCD_Fill(0,30,384,30+180, DARK_RED_BROWN);
-    POINT_COLOR = GOLDEN_YELLOW;
-    LCD_DrawRectangle(0,30,384,30+180);
-    LCD_DrawRectangle(1,30+1,384-1,30+180-1);
-    LCD_DrawRectangle(2,30+2,384-2,30+180-2);
-    LCD_Fill(0,30,54,30+40, GOLDEN_YELLOW);
-
-    LCD_Fill(384,30,384+96,30+60, DARK_BROWN);
-    LCD_Fill(384,30+44,384+22,30+60, OLIVE_GREEN);
-    POINT_COLOR = OLIVE_GREEN;
-    LCD_DrawRectangle(384,30,384+96,30+60);
-    LCD_DrawRectangle(384+1,30+1,384+96-1,30+60-1);
-    LCD_DrawRectangle(384+2,30+2,384+96-2,30+60-2);
-
-
-    LCD_Fill(384,90,384+96,90+60, MIDNIGHT_BLUE);
-    LCD_Fill(384,90+44,384+22,90+60, COBALT_BLUE);
-    POINT_COLOR = COBALT_BLUE;
-    LCD_DrawRectangle(384,90,384+96,90+60);
-    LCD_DrawRectangle(384+1,90+1,384+96-1,90+60-1);
-    LCD_DrawRectangle(384+2,90+2,384+96-2,90+60-2);
-
-    LCD_Fill(384,150,384+96,150+60, CRIMSON_RED);
-    LCD_Fill(384,150+44,384+22,150+60, CORAL_PINK);
-    POINT_COLOR = CORAL_PINK;
-    LCD_DrawRectangle(384,150,384+96,150+60);
-    LCD_DrawRectangle(384+1,150+1,384+96-1,150+60-1);
-    LCD_DrawRectangle(384+2,150+2,384+96-2,150+60-2);
-
-    POINT_COLOR=SAGE_GREEN;
-    LCD_DrawLine(3,154,380,154);
-    LCD_DrawLine(3,168,380,168);
-    LCD_DrawLine(3,181,380,181);
-    LCD_DrawLine(3,194,380,194);
-
-//    POINT_COLOR=LIME_GREEN;
-//    LCD_Draw_Circle(12,181,5);
-//    LCD_Fill(12,181-1,90,181, LIME_GREEN);
-//    uint16_t x0=91;
-//    uint16_t y0=170;
-//    LCD_Fill(x0,y0+11,x0+0,y0+2, LIME_GREEN);
-//    LCD_Fill(x0+0,y0+10,x0+5,y0+10, LIME_GREEN);
-//    LCD_Fill(x0+3,y0+9,x0+6,y0+9, LIME_GREEN);
-//    LCD_Fill(x0+5,y0+8,x0+7,y0+8, LIME_GREEN);
-//    LCD_Fill(x0+7,y0+7,x0+8,y0+7, LIME_GREEN);
-//    LCD_Fill(x0+8,y0+6,x0+9,y0+6, LIME_GREEN);
-//    LCD_Fill(x0+8,y0+5,x0+10,y0+5, LIME_GREEN);
-//    LCD_Fill(x0+9,y0+4,x0+10,y0+4, LIME_GREEN);
-//    LCD_Fill(x0+9,y0+3,x0+10,y0+3, LIME_GREEN);
-//    LCD_Fill(x0+10,y0+2,x0+11,y0+2, LIME_GREEN);
-//    LCD_Fill(x0+10,y0+1,x0+11,y0+1, LIME_GREEN);
-//    LCD_Fill(x0+10,y0+0,x0+11,y0+0, LIME_GREEN);
-
-    Draw_WaveLine();
-    Draw_StaticText();
-
-
-
+//    ShowCnt(12345);
+//    ShowC1C2(1.23f,2.3f);
+//    ShowC3C4(2.34f,4.50f);
+    ShowSetVoltage(6.7f);
+    ShowSQDuration(2.1f);
+    ShowWE1Duration(1.3f);
+    ShowCOOLDuration(3.5f);
+    ShowWE2Duration(5.7f);
+    ShowWeldingCurrent(4567);
 
   /* USER CODE END 2 */
 

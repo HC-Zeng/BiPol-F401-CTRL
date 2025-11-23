@@ -1,5 +1,5 @@
 #include "ui.h"
-
+#include "stdio.h"
 
 void Draw_RoundedRectangleBody(u16 bbx, u16 bby)
 {
@@ -240,61 +240,25 @@ void Draw_WaveLine() {
 }
 void Draw_StaticText()
 {
-    POINT_COLOR=WHITE;
-
-    LCD_ShowSongtiString2010(20,5,"TMAXCESW");
-    LCD_ShowSongtiString2010(340,5,"Cnt:");
-    LCD_ShowSongtiString2010(390,5,"0000001");
+    POINT_COLOR = WHITE;
+    LCD_ShowSongtiString2010(20,5,"TMAXCESW",0);
+    LCD_ShowSongtiString2010(340,5,"Cnt:",0);
 
     LCD_ShowHeitiString2010(10, 41, "CH3");
 
     LCD_ShowHeitiString2010(70,46,"WM");
     LCD_ShowHeitiString2010(100,46,"AUTO");
     LCD_ShowHeitiString2010(170,46,"U/V");
-    LCD_ShowHeitiString2010(210,46,"5.90");
+
     LCD_ShowHeitiString2010(280,46,"I/A");
-    LCD_ShowHeitiString2010(320,46,"5000");
 
-    LCD_ShowHeitiString2814(14,120,"1.2");
-    LCD_ShowHeitiString2010(64,128,"MS");
-
-    LCD_ShowHeitiString2814(106,120,"6.0");
-    LCD_ShowHeitiString2010(156,128,"MS");
-
-    LCD_ShowHeitiString2814(200,120,"1.0");
-    LCD_ShowHeitiString2010(250,128,"MS");
-
-    LCD_ShowHeitiString2814(296,120,"6.0");
-    LCD_ShowHeitiString2010(346,128,"MS");
-
-    LCD_ShowSongtiString2010(387, 72, "C");
+    LCD_ShowSongtiString2010(387, 72, "C",0);
     LCD_ShowSongtiChar1206(399,79,'1');
 
-    LCD_ShowSongtiString2010(387, 132, "C");
+    LCD_ShowSongtiString2010(387, 132, "C",0);
     LCD_ShowSongtiChar1206(399,139,'2');
 
-    LCD_ShowSongtiString2010(390, 192, "V");
-
-    LCD_ShowSongtiString1407(420,38,"2.75");
-    LCD_ShowSongtiString1407(456,38,"V");
-
-    LCD_ShowSongtiString1407(420,54,"2.74");
-    LCD_ShowSongtiString1407(456,54,"V");
-
-    LCD_ShowSongtiString1407(420,70,"5.49");
-    LCD_ShowSongtiString1407(456,70,"V");
-
-    LCD_ShowSongtiString1407(420,98,"2.75");
-    LCD_ShowSongtiString1407(456,98,"V");
-
-    LCD_ShowSongtiString1407(420,114,"2.74");
-    LCD_ShowSongtiString1407(456,114,"V");
-
-    LCD_ShowSongtiString1407(420,130,"5.49");
-    LCD_ShowSongtiString1407(456,130,"V");
-
-    LCD_ShowHeitiString2814(400,164,"5.98");
-    LCD_ShowHeitiString2814(460,164,"V");
+    LCD_ShowSongtiString2010(390, 192, "V",0);
 
     LCD_ShowHeitiString2010(35, 228, "SQ");
     LCD_ShowHeitiString2010(130, 228, "WE1");
@@ -307,4 +271,144 @@ void Draw_StaticText()
     LCD_ShowHeitiString2010(219, 283, "AUTO");
     LCD_ShowHeitiString2010(310, 283, "PARAM");
     LCD_ShowHeitiString2010(410, 283, "SAVE");
+}
+void ShowCnt(uint32_t cnt)
+{
+    char buffer[8];
+    BACK_COLOR = BLACK;
+    snprintf(buffer, sizeof(buffer), "%07lu", cnt);
+    LCD_ShowSongtiString2010(390, 5, buffer,1);
+}
+void ShowC1C2(float vc1, float vc2)
+{
+    char buffer[8];
+    BACK_COLOR = DARK_BROWN;
+    snprintf(buffer, sizeof(buffer), "%.2f", vc1);
+    LCD_ShowSongtiString1407(420, 38, buffer);
+    LCD_ShowSongtiString1407(456, 38, "V");
+
+    snprintf(buffer, sizeof(buffer), "%.2f", vc2);
+    LCD_ShowSongtiString1407(420, 54, buffer);
+    LCD_ShowSongtiString1407(456, 54, "V");
+
+    snprintf(buffer, sizeof(buffer), "%.2f", vc1 + vc2);
+    LCD_ShowSongtiString1407(420, 70, buffer);
+    LCD_ShowSongtiString1407(456, 70, "V");
+}
+void ShowC3C4(float vc3, float vc4) {
+    char buffer[8];
+    BACK_COLOR = MIDNIGHT_BLUE;
+    snprintf(buffer, sizeof(buffer), "%.2f", vc3);
+    LCD_ShowSongtiString1407(420, 98, buffer);
+    LCD_ShowSongtiString1407(456, 98, "V");
+
+    snprintf(buffer, sizeof(buffer), "%.2f", vc4);
+    LCD_ShowSongtiString1407(420, 114, buffer);
+    LCD_ShowSongtiString1407(456, 114, "V");
+
+    snprintf(buffer, sizeof(buffer), "%.2f", vc3 + vc4);
+    LCD_ShowSongtiString1407(420, 130, buffer);
+    LCD_ShowSongtiString1407(456, 130, "V");
+}
+void ShowSetVoltage(float v)
+{
+    char buffer[8];
+    BACK_COLOR = CRIMSON_RED;
+    snprintf(buffer, sizeof(buffer), "%.2f", v);
+
+    LCD_ShowHeitiString2010(210,46,buffer);
+
+    LCD_ShowHeitiString2814(400,164,buffer);
+    LCD_ShowHeitiString2814(460,164,"V");
+}
+void ShowSQDuration(float dur)
+{
+    char buffer[8];
+    snprintf(buffer, sizeof(buffer), "%.1f", dur);
+    LCD_ShowHeitiString2814(14,120,buffer);
+    LCD_ShowHeitiString2010(64,128,"MS");
+}
+void ShowWE1Duration(float dur)
+{
+    char buffer[8];
+    snprintf(buffer, sizeof(buffer), "%.1f", dur);
+    LCD_ShowHeitiString2814(106,120,buffer);
+    LCD_ShowHeitiString2010(156,128,"MS");
+}
+void ShowCOOLDuration(float dur)
+{
+    char buffer[8];
+    snprintf(buffer, sizeof(buffer), "%.1f", dur);
+    LCD_ShowHeitiString2814(200,120,buffer);
+    LCD_ShowHeitiString2010(250,128,"MS");
+}
+void ShowWE2Duration(float dur) {
+    char buffer[8];
+    snprintf(buffer, sizeof(buffer), "%.1f", dur);
+    LCD_ShowHeitiString2814(296, 120, buffer);
+    LCD_ShowHeitiString2010(346, 128, "MS");
+}
+void ShowWeldingCurrent(uint16_t curr)
+{
+    char buffer[16];
+    snprintf(buffer, sizeof(buffer), "%u", curr);
+    LCD_ShowHeitiString2010(320,46,buffer);
+}
+void initUI()
+{
+    // First row of buttons at the bottom
+    Draw_RoundedRectangle(0 * 96, 320 - 1 * 54);
+    Draw_RoundedRectangle(1 * 96, 320 - 1 * 54);
+    Draw_RoundedRectangle(2 * 96, 320 - 1 * 54);
+    Draw_RoundedRectangle(3 * 96, 320 - 1 * 54);
+    Draw_RoundedRectangle(4 * 96, 320 - 1 * 54);
+
+    // Second row of buttons at the bottom
+    Draw_RoundedRectangle(0 * 96, 320 - 2 * 54);
+    Draw_RoundedRectangle(1 * 96, 320 - 2 * 54);
+    Draw_RoundedRectangle(2 * 96, 320 - 2 * 54);
+    Draw_RoundedRectangle(3 * 96, 320 - 2 * 54);
+    Draw_RoundedRectangle(4 * 96, 320 - 2 * 54);
+
+    // Main display area
+    LCD_Fill(0,30,384,30+180, DARK_RED_BROWN);
+    POINT_COLOR = GOLDEN_YELLOW;
+    LCD_DrawRectangle(0,30,384,30+180);
+    LCD_DrawRectangle(1,30+1,384-1,30+180-1);
+    LCD_DrawRectangle(2,30+2,384-2,30+180-2);
+    LCD_Fill(0,30,54,30+40, GOLDEN_YELLOW);
+
+    // Horizontal lines in main display area
+    POINT_COLOR=SAGE_GREEN;
+    LCD_DrawLine(3,154,380,154);
+    LCD_DrawLine(3,168,380,168);
+    LCD_DrawLine(3,181,380,181);
+    LCD_DrawLine(3,194,380,194);
+
+    // C1/C2 Capacitor Display Area on the Right
+    LCD_Fill(384,30,384+96,30+60, DARK_BROWN);
+    LCD_Fill(384,30+44,384+22,30+60, OLIVE_GREEN);
+    POINT_COLOR = OLIVE_GREEN;
+    LCD_DrawRectangle(384,30,384+96,30+60);
+    LCD_DrawRectangle(384+1,30+1,384+96-1,30+60-1);
+    LCD_DrawRectangle(384+2,30+2,384+96-2,30+60-2);
+
+    // C2/C3 Capacitor Display Area on the Right
+    LCD_Fill(384,90,384+96,90+60, MIDNIGHT_BLUE);
+    LCD_Fill(384,90+44,384+22,90+60, COBALT_BLUE);
+    POINT_COLOR = COBALT_BLUE;
+    LCD_DrawRectangle(384,90,384+96,90+60);
+    LCD_DrawRectangle(384+1,90+1,384+96-1,90+60-1);
+    LCD_DrawRectangle(384+2,90+2,384+96-2,90+60-2);
+
+    // Setting Voltage Display Area on the Right
+    LCD_Fill(384,150,384+96,150+60, CRIMSON_RED);
+    LCD_Fill(384,150+44,384+22,150+60, CORAL_PINK);
+    POINT_COLOR = CORAL_PINK;
+    LCD_DrawRectangle(384,150,384+96,150+60);
+    LCD_DrawRectangle(384+1,150+1,384+96-1,150+60-1);
+    LCD_DrawRectangle(384+2,150+2,384+96-2,150+60-2);
+
+    Draw_WaveLine();
+    Draw_StaticText();
 }
