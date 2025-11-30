@@ -74,24 +74,22 @@ void Error_Handler(void);
 #define ADC_C3A7_GPIO_Port GPIOA
 #define BUZZER_Pin GPIO_PIN_4
 #define BUZZER_GPIO_Port GPIOC
+#define LED3_Pin GPIO_PIN_0
+#define LED3_GPIO_Port GPIOB
 #define AUTO_TRIG_Pin GPIO_PIN_12
 #define AUTO_TRIG_GPIO_Port GPIOB
-#define AUTO_TRIG_EXTI_IRQn EXTI15_10_IRQn
 #define OUT_CH1_Pin GPIO_PIN_13
 #define OUT_CH1_GPIO_Port GPIOB
 #define OUT_CH2_Pin GPIO_PIN_14
 #define OUT_CH2_GPIO_Port GPIOB
 #define AMT_TRIG_Pin GPIO_PIN_15
 #define AMT_TRIG_GPIO_Port GPIOB
-#define AMT_TRIG_EXTI_IRQn EXTI15_10_IRQn
 #define PHA_Pin GPIO_PIN_6
 #define PHA_GPIO_Port GPIOC
-#define PHA_EXTI_IRQn EXTI9_5_IRQn
 #define PHB_Pin GPIO_PIN_7
 #define PHB_GPIO_Port GPIOC
 #define SET_Pin GPIO_PIN_8
 #define SET_GPIO_Port GPIOC
-#define SET_EXTI_IRQn EXTI9_5_IRQn
 #define LED_Pin GPIO_PIN_9
 #define LED_GPIO_Port GPIOC
 #define RST_Pin GPIO_PIN_8
@@ -118,7 +116,6 @@ void Error_Handler(void);
 #define CTR_SW_GPIO_Port GPIOB
 #define PRE_EXIT_Pin GPIO_PIN_9
 #define PRE_EXIT_GPIO_Port GPIOB
-#define PRE_EXIT_EXTI_IRQn EXTI9_5_IRQn
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

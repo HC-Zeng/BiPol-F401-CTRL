@@ -86,6 +86,7 @@ extern uint16_t  BACK_COLOR; //背景颜色.默认为白色
 
 #define PALE_SILVER      0x3208  // RGB(204,188,188) 反相后的RGB565值
 #define STEEL_BLUE 0xB4AB  // RGB(75,107,164) 反相后的RGB565值
+#define STEEL_BLUE_INV  0xA92B  // RGB(180,148,91) - 反色
 #define DARK_GRAY 0xBDF7  // RGB(64,64,64) 反相后的RGB565值
 #define DARK_RED_BROWN 0xAF3F  // RGB(87,25,2) 反相后的RGB565值
 #define GOLDEN_YELLOW 0x01DF  // RGB(251,202,3) 反相后的RGB565值

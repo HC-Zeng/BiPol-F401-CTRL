@@ -630,6 +630,10 @@ void LCD_ShowHeitiChar2010(uint16_t x, uint16_t y, char ch)
             {
                 LCD_Fast_DrawPoint(x+j,y+i,POINT_COLOR);
             }
+            else
+            {
+                LCD_Fast_DrawPoint(x+j,y+i,BACK_COLOR);
+            }
             temp>>=1;
         }
     }
@@ -936,6 +940,7 @@ void LCD_ShowHeitiChar2814(uint16_t x, uint16_t y, char ch) {
         case '0': idx = 9; break;
         case '.': idx = 10; break;
         case 'V': idx = 11; break;
+        case ' ': idx = 12; break;
         default: idx = 255; break; // 无效字符返回255
     }
     uint16_t temp;
@@ -947,6 +952,10 @@ void LCD_ShowHeitiChar2814(uint16_t x, uint16_t y, char ch) {
             if(temp&0x0001)
             {
                 LCD_Fast_DrawPoint(x+j,y+i,POINT_COLOR);
+            }
+            else
+            {
+                LCD_Fast_DrawPoint(x+j,y+i,BACK_COLOR);
             }
             temp>>=1;
         }

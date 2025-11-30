@@ -46,7 +46,7 @@ PUTCHAR_PROTOTYPE
 }
 #endif
 
-volatile uint32_t timer_overflow_count = 0;  // 溢出次数�???????????????32位扩展）
+volatile uint32_t timer_overflow_count = 0;  // 溢出次数�????????????????32位扩展）
 
 uint64_t Get_Global_Time_us(void) {
     uint32_t overflow, counter;
@@ -54,7 +54,7 @@ uint64_t Get_Global_Time_us(void) {
         overflow = timer_overflow_count;
         counter = __HAL_TIM_GET_COUNTER(&htim2);
     } while (overflow != timer_overflow_count); // 无锁校验
-    return ((uint64_t)overflow<<32) | counter; // 组合�???????????????64位时间戳
+    return ((uint64_t)overflow<<32) | counter; // 组合�????????????????64位时间戳
 }
 
 void didi()
@@ -62,8 +62,33 @@ void didi()
     HAL_TIM_Base_Start_IT(&htim3);
 }
 
+void (*g_blanking_function)(float) = NULL;
+
+#define INIT_VAL 2000000000
+
+typedef enum {
+    MANUAL,
+    AUTO,
+    NONE
+} WELDING_MODE;
+uint8_t pre_exit = 0;
+WELDING_MODE trig_type=NONE;
+
+uint8_t g_blanking;
+uint32_t g_cnt =  INIT_VAL;
+uint8_t g_btn = 0;
+int32_t btn_delay_cnt = 10000;//500ms base 50us period
+int32_t trig_delay_cnt = 10000;//500ms base 50us period
+int32_t pre_exit_delay_cnt = 100000;//5s base 50us period
 uint8_t bezCnt = 0;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+    static int8_t cnt_btn=0;
+    static int8_t cnt_a=0;
+    static int8_t pre_a=0;
+    static int8_t cnt_b=0;
+    static int8_t cnt_amt_trig=0;
+    static int8_t cnt_auto_trig=0;
+    static int8_t cnt_pre_exit=0;
     if (htim->Instance == TIM2) {
         timer_overflow_count++;
     }
@@ -76,6 +101,82 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
             HAL_TIM_Base_Stop_IT(&htim3);
         }
     }
+    if(htim->Instance == TIM4) // 50us
+    {
+        cnt_amt_trig += HAL_GPIO_ReadPin(AMT_TRIG_GPIO_Port,AMT_TRIG_Pin)?-1:1;
+        cnt_auto_trig += HAL_GPIO_ReadPin(AUTO_TRIG_GPIO_Port,AUTO_TRIG_Pin)?-1:1;
+        cnt_pre_exit += HAL_GPIO_ReadPin(PRE_EXIT_GPIO_Port,PRE_EXIT_Pin)?-1:1;
+        cnt_btn += HAL_GPIO_ReadPin(SET_GPIO_Port,SET_Pin)?-1:1;
+        cnt_a += HAL_GPIO_ReadPin(PHB_GPIO_Port,PHB_Pin)?1:-1;
+        cnt_b += HAL_GPIO_ReadPin(PHA_GPIO_Port,PHA_Pin)?1:-1;
+        cnt_amt_trig = (int8_t)((cnt_amt_trig < 0) ? 0 : ((cnt_amt_trig > 20) ? 20 : cnt_amt_trig));
+        cnt_auto_trig = (int8_t)((cnt_auto_trig < 0) ? 0 : ((cnt_auto_trig > 20) ? 20 : cnt_auto_trig));
+        cnt_pre_exit = (int8_t)((cnt_pre_exit < 0) ? 0 : ((cnt_pre_exit > 20) ? 20 : cnt_pre_exit));
+        cnt_btn = (int8_t)((cnt_btn < 0) ? 0 : ((cnt_btn > 20) ? 20 : cnt_btn));
+        cnt_a = (int8_t)((cnt_a < 0) ? 0 : ((cnt_a > 20) ? 20 : cnt_a));
+        cnt_b = (int8_t)((cnt_b < 0) ? 0 : ((cnt_b > 20) ? 20 : cnt_b));
+        if(trig_type==NONE)
+        {
+            trig_delay_cnt -= 1;
+            trig_delay_cnt = (trig_delay_cnt > 10000) ? 10000 : ((trig_delay_cnt < 0) ? 0 : trig_delay_cnt);
+        }
+        btn_delay_cnt -= 1;
+        btn_delay_cnt = (btn_delay_cnt > 10000) ? 10000 : ((btn_delay_cnt < 0) ? 0 : btn_delay_cnt);
+        if(pre_exit==0)
+        {
+            pre_exit_delay_cnt -= 1;
+            pre_exit_delay_cnt = (pre_exit_delay_cnt > 100000) ? 100000 : ((pre_exit_delay_cnt < 0) ? 0 : pre_exit_delay_cnt);
+        }
+
+        if(cnt_amt_trig>10 && trig_delay_cnt==0)
+        {
+            trig_type = MANUAL;
+            trig_delay_cnt = 10000;
+        }
+
+        if(cnt_auto_trig>10 && trig_delay_cnt==0)
+        {
+            trig_type = AUTO;
+            trig_delay_cnt = 10000;
+        }
+        if(cnt_pre_exit>10 && pre_exit_delay_cnt==0)
+        {
+            pre_exit = 1;
+            pre_exit_delay_cnt = 100000;
+        }
+
+        if(cnt_btn>10 && btn_delay_cnt==0)
+        {
+            didi();
+            g_btn = 1;
+            cnt_btn = 0;
+            btn_delay_cnt = 10000;// reset
+        }
+
+        if(cnt_a>10)
+        {
+            pre_a = 1;
+        }
+        else
+        {
+            if(pre_a)
+            {
+                if(cnt_b>10)//CCW
+                {
+                    didi();
+                    g_cnt--;
+                }else //CW
+                {
+                    didi();
+                    g_cnt++;
+                }
+            }
+            pre_a = 0;
+        }
+        //HAL_GPIO_WritePin(LED3_GPIO_Port,LED3_Pin,0);
+//        HAL_GPIO_TogglePin(LED2_GPIO_Port,LED2_Pin);
+        //HAL_GPIO_WritePin(LED2_GPIO_Port,LED2_Pin,0);
+    }
 }
 
 
@@ -83,7 +184,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-/* 系统状�?�枚�??????????? */
+/* 系统状�?�枚�???????????? */
 typedef enum {
     STATE_INIT = 0,
     STATE_CHARGE,
@@ -95,28 +196,24 @@ typedef enum {
 /* 全局变量 */
 SystemState g_state = STATE_INIT;
 
-uint32_t g_adc_buffer[5];            // ADC采样缓冲�???????????
+uint32_t g_adc_buffer[5];            // ADC采样缓冲�????????????
 uint16_t g_target_voltage_mv = 0;    // 目标电压 (mV)
 uint16_t g_cap_voltage_mv[4] = {0};  // 电容电压 (mV)
 uint16_t g_temp = 0;                 // 温度电压 (mv)
 
 
-uint8_t g_pulse_generating = 0;
-
-uint8_t pre_exit = 0;
 uint8_t value_updated = 0;
-uint8_t g_type = 0; // 0:AMT,1: AUTO
+
+
+
+WELDING_MODE g_weldingMode = 0; // 0:AMT,1: AUTO
 float g_U = 9.2f;     // 0.2-12.0 v
 float g_psqr = 0.1f;  // 0.1-5.0 s
 float g_ch1 = 9.6f;   // 0.1-25.0 ms
 float g_cool = 1.0f;  // 1.0-9.9 ms
 float g_ch2 = 9.6f;   // 0.1-25.0 ms
 uint32_t g_count = 0; // 0->>>>>
-uint32_t g_cnt =  2000000000;
-uint8_t g_btn = 0;
 
-// Pulse Generation Related
-uint8_t trig_type=0; //0: no trig; 1: AMT trig; 2: AUTO trig
 
 void SystemStateMachine(void);
 void UpdateVoltageMeasurements(void);
@@ -131,12 +228,12 @@ uint8_t env_detect()
         pretime = crrtime;
         if(g_temp<1500)
         {
-            printf("FAN ON\r\n");
+//            printf("FAN ON\r\n");
             HAL_GPIO_WritePin(CTR_FAN_GPIO_Port,CTR_FAN_Pin,1);
         }
-        if(g_temp>1700)
+        if(g_temp>1800)
         {
-            printf("FAN OFF\r\n");
+//            printf("FAN OFF\r\n");
             HAL_GPIO_WritePin(CTR_FAN_GPIO_Port,CTR_FAN_Pin,0);
         }
         return 1;
@@ -146,7 +243,7 @@ uint8_t env_detect()
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
     if(hadc->Instance == ADC1) {
-        HAL_GPIO_TogglePin(LED2_GPIO_Port,LED2_Pin);
+//        HAL_GPIO_TogglePin(LED2_GPIO_Port,LED2_Pin);
         UpdateVoltageMeasurements();
     }
 }
@@ -154,31 +251,29 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
 #define ALPHA 0.1f
 static uint16_t filtered_voltage[4] = {0};
 
-/* 更新电压测量并处理串口输�?????????? */
+
 void UpdateVoltageMeasurements(void) {
 
-    // 1. 更新目标电压
     g_target_voltage_mv = (u_int16_t)(g_U/2.0f*1000.0f);
 
-    // 2. 更新温度数据(PA3)
+    // Temperature Sensor Input. channel(PA3)
     g_temp = (uint16_t)(g_adc_buffer[0] * 3300.0f / 4096.0f); // <1500,fan on; >1700, fan off
 
-    // 3. 更新电容电压 (PA4-PA7)
+    // Four Capacitor Voltage Inputs. channel(PA4-PA7)
     for(int i = 0; i < 4; i++) {
         float adc_voltage = g_adc_buffer[i+1] * 3.3f / 4096.0f;
+        // scaling
         uint16_t raw_voltage = (uint16_t)(adc_voltage * (16.0f / 10.0f) * 1000);
 
-        // �??????????阶低通滤�??????????
+        // Low-pass filter
         if(filtered_voltage[i] == 0) {
-            // 第一次计算，直接赋�??
             filtered_voltage[i] = raw_voltage;
         } else {
-            // 滤波计算: new = α * current + (1-α) * old
             filtered_voltage[i] = (uint16_t)(ALPHA * raw_voltage + (1 - ALPHA) * filtered_voltage[i]);
         }
         g_cap_voltage_mv[i] = filtered_voltage[i];
     }
-    //           输出格式: 时间(ms),目标电压,电容1,电容2,电容3,电容4,状�??
+
 //    printf("Set=%u,C1=%u,C2=%u,C3=%u,C4=%u,St=%d\r\n",
 //           g_target_voltage_mv,
 //           g_cap_voltage_mv[0],
@@ -189,10 +284,8 @@ void UpdateVoltageMeasurements(void) {
 }
 
 
-/* 控制参数 */
-#define BALANCE_THRESHOLD    20    // 均衡阈�?�为20mv
+#define BALANCE_THRESHOLD    20    // unit(mv)
 
-/* 状太机核心�?�辑 */
 void SystemStateMachine(void) {
     uint8_t i;
     uint16_t max_voltage = 0;
@@ -200,7 +293,6 @@ void SystemStateMachine(void) {
     uint16_t avg_voltage = 0;
     uint8_t max_id = 0;
 
-    // 计算统计�????????
     for(i = 0; i < 4; i++) {
         if(g_cap_voltage_mv[i] > max_voltage)
         {
@@ -215,22 +307,19 @@ void SystemStateMachine(void) {
     }
     avg_voltage /= 4;
 
-    // 状�?�转换�?�辑
     switch(g_state) {
         case STATE_INIT:
             g_state = STATE_CHARGE;
             break;
 
         case STATE_CHARGE: {
-            // 打开充电�????????�????????
             HAL_GPIO_WritePin(CTR_SW_GPIO_Port, CTR_SW_Pin, GPIO_PIN_SET);
-            // 禁止均衡
+
             HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, GPIO_PIN_RESET);
             HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, GPIO_PIN_RESET);
             HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, GPIO_PIN_RESET);
             HAL_GPIO_WritePin(CTR_C4_GPIO_Port, CTR_C4_Pin, GPIO_PIN_RESET);
 
-            // 平均电压大于设定值的80%，开始均�????????
             if(avg_voltage > g_target_voltage_mv*0.3) {
                 g_state = STATE_BALANCE;
             }
@@ -238,31 +327,25 @@ void SystemStateMachine(void) {
         }
 
         case STATE_BALANCE: {
-            // 打开充电�????????�????????
             HAL_GPIO_WritePin(CTR_SW_GPIO_Port, CTR_SW_Pin, GPIO_PIN_SET);
 
-            // 均衡控制策略
             uint8_t discharge_flags[4] = {0};
 
-            // 四路电压的最大�?�减去最小�?�大于平衡阈值，�????????始均衡，把最大电压的电容放电
             if(max_voltage-min_voltage > BALANCE_THRESHOLD)
             {
                 discharge_flags[max_id] = 1;
             }
 
-            // 设置放电管状�????????
             HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, discharge_flags[0]);
             HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, discharge_flags[1]);
             HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, discharge_flags[2]);
             HAL_GPIO_WritePin(CTR_C4_GPIO_Port, CTR_C4_Pin, discharge_flags[3]);
 
-            // 四路�????????大电压小于设定�?�的80%，转到充�????????
             if(max_voltage<g_target_voltage_mv*0.8)
             {
                 g_state = STATE_CHARGE;
             }
 
-            // 平均电压大于设定值，即进入保�????????
             if(avg_voltage>g_target_voltage_mv) {
                 g_state = STATE_MAINTAIN;
             }
@@ -270,31 +353,25 @@ void SystemStateMachine(void) {
         }
 
         case STATE_MAINTAIN: {
-            // 关闭充电
             HAL_GPIO_WritePin(CTR_SW_GPIO_Port, CTR_SW_Pin, GPIO_PIN_RESET);
 
-            // 均衡控制策略
             uint8_t discharge_flags[4] = {0};
 
-            // 四路电压的最大�?�减去最小�?�大于平衡阈值，�????????始均衡，把最大电压的电容放电
             if(max_voltage-min_voltage > BALANCE_THRESHOLD)
             {
                 discharge_flags[max_id] = 1;
             }
 
-            // 设置放电管状�????????
             HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, discharge_flags[0] );
             HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, discharge_flags[1] );
             HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, discharge_flags[2] );
             HAL_GPIO_WritePin(CTR_C4_GPIO_Port, CTR_C4_Pin, discharge_flags[3] );
 
-            // 4路电压最大�?�小于设定，转到均衡
             if(max_voltage<g_target_voltage_mv)
             {
                 g_state = STATE_BALANCE;
             }
 
-            // 四路电压�????????小�?�大于设定，转到放电
             if(min_voltage>g_target_voltage_mv)
             {
                 g_state = STATE_DISCHARGE;
@@ -303,14 +380,11 @@ void SystemStateMachine(void) {
         }
 
         case STATE_DISCHARGE: {
-            // 关闭充电
             HAL_GPIO_WritePin(CTR_SW_GPIO_Port, CTR_SW_Pin, GPIO_PIN_RESET);
 
-            // 均衡控制策略
             uint8_t discharge_flags[4] = {0};
             uint8_t all_in_range = 1;
 
-            // 大于设（设定+阈�?�）的全部进行放�????????
             for(i = 0; i < 4; i++) {
                 if ((g_cap_voltage_mv[i]>=g_target_voltage_mv) && (g_cap_voltage_mv[i] - g_target_voltage_mv > BALANCE_THRESHOLD)) {
                     discharge_flags[i] = 1;
@@ -318,13 +392,11 @@ void SystemStateMachine(void) {
                 }
             }
 
-            // 设置放电管状�????????
             HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, discharge_flags[0] );
             HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, discharge_flags[1] );
             HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, discharge_flags[2] );
             HAL_GPIO_WritePin(CTR_C4_GPIO_Port, CTR_C4_Pin, discharge_flags[3] );
 
-            // 放电完成转到保持
             if(all_in_range)
             {
                 g_state = STATE_MAINTAIN;
@@ -340,32 +412,13 @@ void update_cap_equalizer()
     if(Get_Global_Time_us()>preTimestamp+100000)
     {
         SystemStateMachine();
-//        HAL_GPIO_TogglePin(LAMP_GPIO_Port,LAMP_Pin);
         preTimestamp = Get_Global_Time_us();
-
-        // U1
-//        float U1_tem = (float)((float)(g_cap_voltage_mv[0] + g_cap_voltage_mv[1])/1000.f);
-
         float UC1 = (float)((float)(g_cap_voltage_mv[0])/1000.f); //for debug
         float UC2 = (float)((float)(g_cap_voltage_mv[1])/1000.f); //for debug
         ShowC1C2(UC1,UC2);
-//        Show_Float_2(170,210, UC1,16,0); //for debug
-//        Show_Float_2(218,210, UC2,16,0); //for debug
-
-//        Show_Float_2(188,242, U1_tem,16,0);
-//        Show_Str(222,242,"V",16,0);
-
-        // U2
-//        float U2_tem = (float)((float)(g_cap_voltage_mv[2] + g_cap_voltage_mv[3])/1000.f);
-
         float UC3 = (float)((float)(g_cap_voltage_mv[2])/1000.f); //for debug
         float UC4 = (float)((float)(g_cap_voltage_mv[3])/1000.f); //for debug
         ShowC3C4(UC3,UC4);
-//        Show_Float_2(326,210, UC3,16,0); //for debug
-//        Show_Float_2(374,210, UC4,16,0); //for debug
-
-//        Show_Float_2(344,242, U2_tem,16,0);
-//        Show_Str(378,242,"V",16,0);
     }
 }
 
@@ -374,451 +427,44 @@ void update_cap_equalizer()
 static void saveVal()
 {
     data_cfg_t dataCfg;
-    dataCfg.u = (uint32_t)(g_U*10);
-    dataCfg.psqr = (uint32_t)(g_psqr*10);
-    dataCfg.ch1 = (uint32_t)(g_ch1*10);
-    dataCfg.cool = (uint32_t)(g_cool*10);
-    dataCfg.ch2 = (uint32_t)(g_ch2*10);
-    dataCfg.type = (uint32_t)(g_type);
+    #define FLOAT_TO_UINT32(x) ((uint32_t)((x) + 0.5f))
+    dataCfg.u = FLOAT_TO_UINT32(g_U*100);
+    dataCfg.psqr = FLOAT_TO_UINT32(g_psqr*10);
+    dataCfg.ch1 = FLOAT_TO_UINT32(g_ch1*10);
+    dataCfg.cool = FLOAT_TO_UINT32(g_cool*10);
+    dataCfg.ch2 = FLOAT_TO_UINT32(g_ch2*10);
+    dataCfg.type = (uint32_t)(g_weldingMode);
     dataCfg.count = (uint32_t)(g_count);
     dataCfg.flag = 12345;
+
+//    printf("dataCfg.psqr=%lu, psqr=%f",dataCfg.psqr,g_psqr);
+
     FlashStore_Save(dataCfg);
 
     static uint32_t cnt = 0;
     cnt += 1;
-    LCD_ShowNum(364,70,cnt,10,16);
 }
 
-
-void Show_Page_Main(void)
+void back_to_idle()
 {
-    POINT_COLOR=GREEN;
-    LCD_DrawRectangle(70,35,122,64);
-//    POINT_COLOR=WHITE;
-//    Show_Str(84,41,"AMT",16,1);
-    POINT_COLOR=GREEN;
-    LCD_DrawRectangle(362,35,448,64);
-    Show_Str(316,41,"COUNT",16,1);
-
-    POINT_COLOR=RED;
-    LCD_DrawLine(39,116,74,116);
-    LCD_DrawLine(74,116,74,100);
-    LCD_DrawLine(74,100,127,100);
-    LCD_DrawLine(127,100,127,116);
-    LCD_DrawLine(127,116,155,116);
-    LCD_DrawLine(155,116,166,100);
-    LCD_DrawLine(166,100,245,100);
-    LCD_DrawLine(245,100,256,116);
-    LCD_DrawLine(256,116,309,116);
-    LCD_DrawLine(309,116,320,132);
-    LCD_DrawLine(320,132,405,132);
-    LCD_DrawLine(405,132,416,116);
-    LCD_DrawLine(416,116,461,116);
-
-    LCD_DrawLine(39,115,74,115);
-    LCD_DrawLine(73,116,73,100);
-    LCD_DrawLine(74,99,127,99);
-    LCD_DrawLine(126,100,126,116);
-    LCD_DrawLine(127,115,155,115);
-    LCD_DrawLine(154,116,165,100);
-    LCD_DrawLine(166,99,245,99);
-    LCD_DrawLine(244,100,255,116);
-    LCD_DrawLine(256,115,309,115);
-    LCD_DrawLine(308,116,319,132);
-    LCD_DrawLine(320,131,405,131);
-    LCD_DrawLine(404,132,415,116);
-    LCD_DrawLine(416,115,461,115);
-
-    POINT_COLOR=WHITE;
-    Show_Str(80,150,"PSQR",16,1);
-    POINT_COLOR=GREEN;
-    LCD_DrawRectangle(70,167,122,203);
-    POINT_COLOR=WHITE;
-    Show_Str(195,150,"CH1",16,1);
-    POINT_COLOR=GREEN;
-    LCD_DrawRectangle(170,167,241,203);
-    POINT_COLOR=WHITE;
-    Show_Str(272,150,"COOL",16,1);
-    POINT_COLOR=GREEN;
-    LCD_DrawRectangle(258,167,315,203);
-    POINT_COLOR=WHITE;
-    Show_Str(355,150,"CH2",16,1);
-    POINT_COLOR=GREEN;
-    LCD_DrawRectangle(332,167,404,203);
-    POINT_COLOR=WHITE;
-    Show_Str(56,243,"U",16,1);
-    POINT_COLOR=GREEN;
-    LCD_DrawRectangle(70,232,122,268);
-    POINT_COLOR=WHITE;
-    Show_Str(156,243,"U1",16,1);
-    POINT_COLOR=GREEN;
-    LCD_DrawRectangle(176,232,247,268);
-    POINT_COLOR=WHITE;
-    Show_Str(312,243,"U2",16,1);
-    POINT_COLOR=GREEN;
-    LCD_DrawRectangle(332,232,404,268);
-}
-
-void draw_selected(uint8_t index,uint16_t color, uint8_t selected)
-{
-    switch (index) {
-        case 0: // U
-            if(selected){
-                POINT_COLOR=WHITE;
-                LCD_DrawRectangle(69,231,123,269);
-            }
-            else{
-                POINT_COLOR=BLACK;
-                LCD_DrawRectangle(69,231,123,269);
-            }
-            POINT_COLOR = color;
-            LCD_DrawRectangle(70,232,122,268);
-            break;
-        case 1: // PSQR
-            if(selected){
-                POINT_COLOR=WHITE;
-                LCD_DrawRectangle(69,166,123,204);
-            }
-            else{
-                POINT_COLOR=BLACK;
-                LCD_DrawRectangle(69,166,123,204);
-            }
-            POINT_COLOR = color;
-            LCD_DrawRectangle(70,167,122,203);
-            break;
-        case 2: // CH1
-            if(selected){
-                POINT_COLOR=WHITE;
-                LCD_DrawRectangle(169,166,242,204);
-            }
-            else{
-                POINT_COLOR=BLACK;
-                LCD_DrawRectangle(169,166,242,204);
-            }
-            POINT_COLOR = color;
-            LCD_DrawRectangle(170,167,241,203);
-            break;
-        case 3: // COOL
-            if(selected){
-                POINT_COLOR=WHITE;
-                LCD_DrawRectangle(257,166,316,204);
-            }
-            else{
-                POINT_COLOR=BLACK;
-                LCD_DrawRectangle(257,166,316,204);
-            }
-            POINT_COLOR = color;
-            LCD_DrawRectangle(258,167,315,203);
-            break;
-        case 4: // CH2
-            if(selected){
-                POINT_COLOR=WHITE;
-                LCD_DrawRectangle(331,166,405,204);
-            }
-            else{
-                POINT_COLOR=BLACK;
-                LCD_DrawRectangle(331,166,405,204);
-            }
-            POINT_COLOR = color;
-            LCD_DrawRectangle(332,167,404,203);
-            break;
-        case 5: // STORAGE
-            if(selected){
-                POINT_COLOR=WHITE;
-                LCD_DrawRectangle(69,34,123,65);
-            }
-            else{
-                POINT_COLOR=BLACK;
-                LCD_DrawRectangle(69,34,123,65);
-            }
-            POINT_COLOR = color;
-            LCD_DrawRectangle(70,35,122,64);
-            break;
-        default:
-            break;
-    }
-}
-
-void show_select_index(uint8_t index)
-{
-    static uint8_t preIndex = 0;
-    draw_selected(preIndex,GREEN,0); // un select
-    draw_selected(index,WHITE,1);  // selected
-    preIndex = index;
-}
-
-void draw_edited(uint8_t index,uint16_t color, uint8_t edited)
-{
-    switch (index) {
-        case 0: // U
-            if(edited){
-                POINT_COLOR=WHITE;
-                LCD_DrawRectangle(72,234,120,266);
-            }
-            else{
-                POINT_COLOR=BLACK;
-                LCD_DrawRectangle(72,234,120,266);
-            }
-            POINT_COLOR = color;
-            LCD_DrawRectangle(70,232,122,268);
-            break;
-        case 1: // PSQR
-            if(edited){
-                POINT_COLOR=WHITE;
-                LCD_DrawRectangle(72,169,120,201);
-            }
-            else{
-                POINT_COLOR=BLACK;
-                LCD_DrawRectangle(72,169,120,201);
-            }
-            POINT_COLOR = color;
-            LCD_DrawRectangle(70,167,122,203);
-            break;
-        case 2: // CH1
-            if(edited){
-                POINT_COLOR=WHITE;
-                LCD_DrawRectangle(172,169,239,201);
-            }
-            else{
-                POINT_COLOR=BLACK;
-                LCD_DrawRectangle(172,169,239,201);
-            }
-            POINT_COLOR = color;
-            LCD_DrawRectangle(170,167,241,203);
-            break;
-        case 3: // COOL
-            if(edited){
-                POINT_COLOR=WHITE;
-                LCD_DrawRectangle(260,169,313,201);
-            }
-            else{
-                POINT_COLOR=BLACK;
-                LCD_DrawRectangle(260,169,313,201);
-            }
-            POINT_COLOR = color;
-            LCD_DrawRectangle(258,167,315,203);
-            break;
-        case 4: // CH2
-            if(edited){
-                POINT_COLOR=WHITE;
-                LCD_DrawRectangle(334,169,402,201);
-            }
-            else{
-                POINT_COLOR=BLACK;
-                LCD_DrawRectangle(334,169,402,201);
-            }
-            POINT_COLOR = color;
-            LCD_DrawRectangle(332,167,404,203);
-            break;
-        case 5: // STORAGE
-            if(edited){
-                POINT_COLOR=WHITE;
-                LCD_DrawRectangle(72,37,120,62);
-            }
-            else{
-                POINT_COLOR=BLACK;
-                LCD_DrawRectangle(72,37,120,62);
-            }
-            POINT_COLOR = color;
-            LCD_DrawRectangle(70,35,122,64);
-            break;
-        default:
-            break;
-    }
-}
-
-void show_edit_index(uint8_t index)
-{
-    static uint8_t preIndex = 0;
-    draw_selected(index,GREEN,0); // reset
-
-    draw_edited(preIndex,GREEN,0); // un edit
-    draw_edited(index,WHITE,1);  // edit
-    preIndex = index;
-}
-
-void back_to_idle(uint8_t index)
-{
-    draw_selected(index,GREEN,0); // reset
-    draw_edited(index,GREEN,0); // un edit
-
+    printf("back to idle\r\n");
+    ShowSelectedButton(255); // 255 means no button selected
     if(value_updated)
     {
+        printf("value update\r\n");
         saveVal();
         value_updated = 0;
     }
-}
-
-void show_U()
-{
-    // U
-    static uint8_t flag = 0;
-    POINT_COLOR=WHITE;
-    if(g_U<9.99)
-    {
-        if(flag==1)
-        {
-            flag = 0;
-            POINT_COLOR=BLACK;
-            LCD_Fill(73,235,119,265,POINT_COLOR);
-            POINT_COLOR=WHITE;
-        }
-        Show_Float(78,242, g_U,16,0);
-        Show_Str(108,242,"V",16,0);
-    }else
-    {
-        if(flag==0)
-        {
-            flag = 1;
-            POINT_COLOR=BLACK;
-            LCD_Fill(73,235,119,265,POINT_COLOR);
-            POINT_COLOR=WHITE;
-        }
-        Show_Float(76,242, g_U,16,0);
-        Show_Str(110,242,"V",16,0);
-    }
-}
-
-void show_PSQR()
-{
-    POINT_COLOR=WHITE;
-    //LCD_DrawRectangle(70,167,122,203);
-    Show_Float(78,176,g_psqr,16,0);
-    Show_Str(104,176,"S",16,0);
-}
-
-void show_CH1()
-{
-    //LCD_DrawRectangle(170,167,241,203);
-    POINT_COLOR=WHITE;
-    static uint8_t flag = 0;
-    if(g_ch1<9.99)
-    {
-        if(flag==1)
-        {
-            flag = 0;
-            POINT_COLOR=BLACK;
-            LCD_Fill(173,170,238,200,POINT_COLOR);
-            POINT_COLOR=WHITE;
-        }
-        Show_Float(184,176,g_ch1,16,0);
-        Show_Str(212,176,"MS",16,0);
-    }else
-    {
-        if(flag==0)
-        {
-            flag = 1;
-            POINT_COLOR=BLACK;
-            LCD_Fill(173,170,238,200,POINT_COLOR);
-            POINT_COLOR=WHITE;
-        }
-        Show_Float(180,176,g_ch1,16,0);
-        Show_Str(216,176,"MS",16,0);
-    }
-}
-
-void show_COOL()
-{
-    POINT_COLOR=WHITE;
-    // LCD_DrawRectangle(262,167,311,203);
-    Show_Float(266,176,g_cool,16,0);
-    Show_Str(292,176,"MS",16,0);
-}
-
-void show_CH2()
-{
-    POINT_COLOR=WHITE;
-    //LCD_DrawRectangle(332,167,404,203);
-    static uint8_t flag = 0;
-    if(g_ch2<9.99)
-    {
-        if(flag==1)
-        {
-            flag = 0;
-            POINT_COLOR=BLACK;
-            LCD_Fill(335,170,401,200,POINT_COLOR);
-            POINT_COLOR=WHITE;
-        }
-        Show_Float(346,176,g_ch2,16,0);
-        Show_Str(374,176,"MS",16,0);
-    }else
-    {
-        if(flag==0)
-        {
-            flag = 1;
-            POINT_COLOR=BLACK;
-            LCD_Fill(335,170,401,200,POINT_COLOR);
-            POINT_COLOR=WHITE;
-        }
-        Show_Float(342,176,g_ch2,16,0);
-        Show_Str(378,176,"MS",16,0);
-    }
-}
-
-int numLength(uint32_t num) {
-    int len = 0;
-
-    // 处理0的情�????????
-    if (num == 0) {
-        return 1;
-    }
-
-    // 处理负数（计算绝对�?�）
-    if (num < 0) {
-        num = -num;
-    }
-
-    // 通过循环除以10来计算位�????????
-    while (num != 0) {
-        len++;
-        num /= 10;
-    }
-
-    return len;
-}
-
-void show_CNT()
-{
-
-//    LCD_ShowNum(406-(4*numLength(g_count)),41,g_count,numLength(g_count),16);// 83ms
-    ShowCnt(g_count);
-}
-
-void show_TYPE()
-{
-    if(g_type==1)
-    {
-        POINT_COLOR = BLACK;
-        LCD_Fill(73,38,119,61,POINT_COLOR);
-        POINT_COLOR = WHITE;
-        Show_Str(80,41,"AUTO",16,0);
-    }else if(g_type == 0)
-    {
-        POINT_COLOR = BLACK;
-        LCD_Fill(73,38,119,61,POINT_COLOR);
-        POINT_COLOR = WHITE;
-        Show_Str(84,41,"AMT",16,0);
-    }
-}
-
-void showValue()
-{
-    POINT_COLOR=WHITE;
-    show_U();
-    show_PSQR();
-    show_CH1();
-    show_COOL();
-    show_CH2();
-    show_TYPE();
-    show_CNT();
 }
 
 void saveBeforeExit()
 {
     if(pre_exit==1)
     {
+        printf("pre exit.\r\n");
         if(value_updated)
         {
+            printf("save before exit.\r\n");
             saveVal();
             value_updated = 0;
         }
@@ -826,204 +472,168 @@ void saveBeforeExit()
     pre_exit = 0;
 }
 
+void edit_state(uint8_t selected_index,uint8_t editing)
+{
+    switch (selected_index) {
+        case 0:
+            ShowSQDuration(g_psqr, editing);
+            break;
+        case 1:
+            ShowWE1Duration(g_ch1,editing);
+            break;
+        case 2:
+            ShowCOOLDuration(g_cool,editing);
+            break;
+        case 3:
+            ShowWE2Duration(g_ch2,editing);
+            break;
+        case 4:
+            ShowSetVoltage(g_U,editing);
+            break;
+        case 6:
+            ShowWeldingMode(g_weldingMode,editing);
+            break;
+        case 7:
+            ShowWeldingMode(g_weldingMode,editing);
+            break;
+        default:
+            break;
+    }
+}
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-// 状�?�枚�????????
+// State enumeration
 typedef enum {
-    IDLE_MODE,      // 空闲状�??
-    SELECT_MODE,    // 选择变量状�??
-    EDIT_MODE       // 修改变量状�??
+    IDLE_MODE,      // Idle state
+    SELECT_MODE,    // Variable selection state
+    EDIT_MODE       // Variable modification state
 } State;
 
-// 全局状�?�变�????????
+// Global state variable
 State current_state = IDLE_MODE;
-uint8_t selected_index = 5;  // 当前选中的变量索引：0,1,2,3,4,5 ==> U, PSQR, CH1, COOL, CH2, STORAGE
-uint32_t prev_cnt = 2000000000;  // 初始值与你给的g_cnt初始值相�????????
-uint64_t last_activity_time = 0; // �????????后一次活动时间戳
-const uint64_t IDLE_TIMEOUT = 3000000; // 空闲超时时间3�????????
-// 状�?�机处理函数
+uint8_t selected_index = 9;  // Currently selected variable index:0,1,2,3,4,5 6,7,8,9==> PSQR, CH1, COOL, CH2, SOV, RCL, MAN, AUTO, PARAM, SAVE
+uint32_t prev_cnt = INIT_VAL;  // Same initial value as g_cnt.
+uint64_t last_activity_time = 0; // Last activity timestamp
+const uint64_t IDLE_TIMEOUT = 3000000; // Idle timeout: 3s
+// State machine handler
 void update_state_machine(void) {
     uint64_t current_time = Get_Global_Time_us();
 
-    // �????????查空闲超时（除了IDLE_MODE状�?�外�????????
+    // Check for idle timeout (except in IDLE_MODE state).
     if (current_state != IDLE_MODE) {
         if (current_time - last_activity_time > IDLE_TIMEOUT) {
             if(current_state==EDIT_MODE)
             {
+                edit_state(selected_index,0);
                 current_state = SELECT_MODE;
-                draw_edited(selected_index,GREEN,0); // un edit
-                show_select_index(selected_index);
+                ShowSelectedButton(selected_index);
                 last_activity_time = current_time;
             }
             else if(current_state==SELECT_MODE)
             {
                 current_state = IDLE_MODE;
-                back_to_idle(selected_index);
-                selected_index = 5;
-                g_cnt = 2000000000;
-                prev_cnt = 2000000000;
+                back_to_idle();
+                selected_index = 9;
+                g_cnt = INIT_VAL;
+                prev_cnt = INIT_VAL;
             }
             return;
         }
     }
 
-    // 计算编码器计数的变化�????????
+    // Calculate the change in encoder count
     int32_t diff = (int32_t)(g_cnt - prev_cnt);
 
-    // 处理按钮事件（如果按钮被按下�????????
+    // Process button event (if button is pressed)
     if (g_btn == 1) {
         printf("btn=ON\r\n");
-        last_activity_time = current_time; // 更新活动时间
+        last_activity_time = current_time; // Update activity time
 
-        if (current_state == IDLE_MODE) {
-            // 在空闲模式下按下按钮，无动作
-        } else if (current_state == SELECT_MODE) {
-            // 在�?�择模式下按下按钮，进入编辑模式
+        if (current_state == IDLE_MODE)
+        {
+            // do nothing
+        }else if (current_state == SELECT_MODE)
+        {
+            if(selected_index==6)
+            {
+                g_weldingMode = MANUAL;
+            }else if(selected_index==7)
+            {
+                g_weldingMode = AUTO;
+            }
+            edit_state(selected_index,1);
             current_state = EDIT_MODE;
-            show_edit_index(selected_index);
-        } else if (current_state == EDIT_MODE) {
-            // 在编辑模式下按下按钮，返回�?�择模式
+
+        } else if (current_state == EDIT_MODE)
+        {
             current_state = SELECT_MODE;
-            draw_edited(selected_index,GREEN,0); // un edit
-            show_select_index(selected_index);
+            edit_state(selected_index,0);
+            ShowSelectedButton(selected_index);
         }
-        g_btn = 0;  // 清除按钮状�?�（软件清零�????????
+        g_btn = 0;
         return;
     }
 
-    // 处理编码器旋转事件（如果有旋转）
+    // Process encoder rotation event (if rotated)
     if (diff != 0) {
-
-        last_activity_time = current_time; // 更新活动时间
-        prev_cnt = g_cnt;  // 更新上一次的计数
-
+        last_activity_time = current_time;
+        prev_cnt = g_cnt;
         if (current_state == IDLE_MODE) {
-            // 在空闲模式下旋转编码器，进入选择模式
             current_state = SELECT_MODE;
         } else if (current_state == SELECT_MODE) {
-            // 在�?�择模式下，旋转编码器改变�?�中的变�????????
             if (diff > 0) {
-                // 正转
-                selected_index = (selected_index + 1) % 6;
+                selected_index = (selected_index + 1) % 10;
             } else {
-                // 反转
                 if(selected_index==0) {
-                    selected_index = 5;
+                    selected_index = 9;
                 }else{
                     selected_index = selected_index - 1;
                 }
-                selected_index = selected_index % 6;
+                selected_index = selected_index % 10;
             }
-//            LCD_ShowNum(364,70,selected_index,1,16);
-//            Show_Str(364,90,"12.34",16,1);
-//            Show_Float(364,90,(float)123,16,1);
-            show_select_index(selected_index);
+            ShowSelectedButton(selected_index);
         } else if (current_state == EDIT_MODE) {
-            // 在编辑模式下，旋转编码器改变当前选中的变量的�????????
             switch (selected_index) {
-                case 0: // g_U: 0.0-6.0 v
-                    if(diff>0)
-                    {
-                        g_U += 0.1f;
-                    } else
-                    {
-                        g_U -= 0.1f;
-                    }
-                    if(g_U>6.0f)
-                    {
-                        g_U = 6.0f;
-                    }
-                    if(g_U<0.01f)
-                    {
-                        g_U=0.0f;
-                    }
-                    show_U();
+                case 0: // g_psqr: 0.1-5.0 s
+                    g_psqr += (diff > 0) ? 0.1f : -0.1f;
+                    g_psqr = (g_psqr > 5.0f) ? 5.0f : g_psqr;
+                    g_psqr = (g_psqr < 0.11f) ? 0.1f : g_psqr;
+                    ShowSQDuration(g_psqr,1);
                     break;
-                case 1: // g_psqr: 0.1-5.0 s
-                    if(diff>0)
-                    {
-                        g_psqr += 0.1f;
-                    } else
-                    {
-                        g_psqr -= 0.1f;
-                    }
-                    if(g_psqr>5.0f)
-                    {
-                        g_psqr = 5.0f;
-                    }
-                    if(g_psqr<0.11f)
-                    {
-                        g_psqr=0.1f;
-                    }
-                    show_PSQR();
+                case 1: // g_ch1: 0.1-25.0 ms
+                    g_ch1 += (diff > 0) ? 0.1f : -0.1f;
+                    g_ch1 = (g_ch1 > 25.0f) ? 25.0f : g_ch1;
+                    g_ch1 = (g_ch1 < 0.11f) ? 0.1f : g_ch1;
+                    ShowWE1Duration(g_ch1,1);
                     break;
-                case 2: // g_ch1: 0.1-25.0 ms
-                    if(diff>0)
-                    {
-                        g_ch1 += 0.1f;
-                    } else
-                    {
-                        g_ch1 -= 0.1f;
-                    }
-                    if(g_ch1>25.0f)
-                    {
-                        g_ch1 = 25.0f;
-                    }
-                    if(g_ch1<0.11f)
-                    {
-                        g_ch1=0.1f;
-                    }
-                    show_CH1();
+                case 2: // g_cool:  1.0-9.9 ms
+                    g_cool += (diff > 0) ? 0.1f : -0.1f;
+                    g_cool = (g_cool > 9.9f) ? 9.9f : g_cool;
+                    g_cool = (g_cool < 1.01f) ? 1.0f : g_cool;
+                    ShowCOOLDuration(g_cool,1);
                     break;
-                case 3: // g_cool:  1.0-9.9 ms
-                    if(diff>0)
-                    {
-                        g_cool += 0.1f;
-                    } else
-                    {
-                        g_cool -= 0.1f;
-                    }
-                    if(g_cool>9.9f)
-                    {
-                        g_cool = 9.9f;
-                    }
-                    if(g_cool<1.01f)
-                    {
-                        g_cool=1.0f;
-                    }
-                    show_COOL();
+                case 3: // g_ch2: 0.1-25.0 ms
+                    g_ch2 += (diff > 0) ? 0.1f : -0.1f;
+                    g_ch2 = (g_ch2 > 25.0f) ? 25.0f : g_ch2;
+                    g_ch2 = (g_ch2 < 0.11f) ? 0.1f : g_ch2;
+                    ShowWE2Duration(g_ch2, 1);
                     break;
-                case 4: // g_ch2: 0.1-25.0 ms
-                    if(diff>0)
-                    {
-                        g_ch2 += 0.1f;
-                    } else
-                    {
-                        g_ch2 -= 0.1f;
-                    }
-                    if(g_ch2>25.0f)
-                    {
-                        g_ch2 = 25.0f;
-                    }
-                    if(g_ch2<0.11f)
-                    {
-                        g_ch2=0.1f;
-                    }
-                    show_CH2();
+                case 4: // g_U: 0.0-6.0 v
+                    g_U += (diff > 0) ? 0.02f : -0.02f;
+                    g_U = (g_U > 6.0f) ? 6.0f : g_U;
+                    g_U = (g_U < 0.01f) ? 0.0f : g_U;
+                    ShowSetVoltage(g_U, 1);
                     break;
-                case 5:
-                    // trig type
-                    POINT_COLOR=WHITE;
-                    if(g_type==0)
-                    {
-                        g_type = 1; // AUTO
-                    }else
-                    {
-                        g_type = 0; // AMT
-                    }
-                    show_TYPE();
+                case 6:
+                    g_weldingMode = MANUAL;
+                    ShowWeldingMode(g_weldingMode, 1);
+                    break;
+                case 7:
+                    g_weldingMode = AUTO;
+                    ShowWeldingMode(g_weldingMode, 1);
                     break;
                 default:
                     break;
@@ -1041,25 +651,14 @@ void update_pulse_generation()
 {
     uint8_t gen_flag = 0;
     uint64_t pre_time_stamp = 0;
-    if(g_type==0) // AMT
+    if(g_weldingMode==trig_type)
     {
-        if(trig_type == 1) // AMT trig
-        {
-            gen_flag = 1;
-        }
-    } else if(g_type == 1) // AUTO
-    {
-        if(trig_type == 2) // AUTO trig
-        {
-            gen_flag = 1;
-        }
+        gen_flag = 1;
+        printf("gen trig\r\n");
     }
 
     if(gen_flag == 1)
     {
-        // Disable External Inputs
-        g_pulse_generating = 1;
-
         // 1, delay for PSQR
         pre_time_stamp = Get_Global_Time_us();
         while(Get_Global_Time_us() < pre_time_stamp + (uint64_t)(g_psqr*1000000)){};
@@ -1081,17 +680,13 @@ void update_pulse_generation()
         HAL_GPIO_WritePin(OUT_CH2_GPIO_Port,OUT_CH2_Pin,0);
 
         g_count ++;
-        show_CNT();
+        ShowCnt(g_count);
         value_updated = 1;
-
-        // Enable External Inputs
-        g_pulse_generating = 0;
     }
 
     // clear trig flag
-    trig_type = 0;
+    trig_type = NONE;
 }
-
 
 /* USER CODE END PV */
 
@@ -1141,14 +736,17 @@ int main(void)
   MX_USART1_UART_Init();
   MX_CRC_Init();
   MX_TIM3_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)g_adc_buffer, 5);
-  HAL_TIM_Base_Start_IT(&htim2);
-  FlashStore_Init();
+    HAL_ADC_Start_DMA(&hadc1, (uint32_t*)g_adc_buffer, 5);
+    HAL_TIM_Base_Start_IT(&htim2);
+    HAL_TIM_Base_Start_IT(&htim4);
 
-    // 初始状�?�设�????????
-    HAL_GPIO_WritePin(CTR_SW_GPIO_Port, CTR_SW_Pin, GPIO_PIN_RESET); // 关闭充电
-    HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, GPIO_PIN_RESET);   // 关闭放电
+    FlashStore_Init();
+
+    // all switch off
+    HAL_GPIO_WritePin(CTR_SW_GPIO_Port, CTR_SW_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(CTR_C1_GPIO_Port, CTR_C1_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(CTR_C2_GPIO_Port, CTR_C2_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(CTR_C4_GPIO_Port, CTR_C4_Pin, GPIO_PIN_RESET);
@@ -1156,58 +754,45 @@ int main(void)
     data_cfg_t dataCfg;
     if(FlashStore_GetLatest(&dataCfg))
     {
-        g_U = (float)(dataCfg.u/10.0f);
+        if(dataCfg.u%2!=0)
+        {
+            dataCfg.u+=1;
+        }
+        g_U = (float)(dataCfg.u/100.0f);
         g_psqr =  (float)(dataCfg.psqr/10.0f);
         g_ch1 = (float)(dataCfg.ch1/10.0f);
         g_cool = (float)(dataCfg.cool/10.0f);
         g_ch2 = (float)(dataCfg.ch2/10.0f);
-        g_type = (uint8_t)dataCfg.type;
+        g_weldingMode = (uint8_t)dataCfg.type;
         g_count = dataCfg.count;
+        printf("Get data success,SQ=%f\r\n",g_psqr);
     }
     else
     {
+        printf("Get data failed\r\n");
         saveVal();
     }
 
-    LCD_Init();			   	           //Initialize LCD
-    LCD_Display_Dir(USE_LCM_DIR);		   //Screen orientation
+    LCD_Init();
+    LCD_Display_Dir(USE_LCM_DIR); //Screen orientation
     LCD_Clear(BLACK);
-    LCD_Turn_On_Backlight();
-    Show_Page_Main();
-    showValue();
-
-//    data_cfg_t dataCfg;
-//    dataCfg.u = 123;
-//    dataCfg.psqr = 234;
-//    dataCfg.ch1 = 345;
-//    dataCfg.cool = 456;
-//    dataCfg.ch2 = 567;
-//    dataCfg.type = 678;
-//    dataCfg.count = 789;
-//    dataCfg.flag = 890;
-////    FlashStore_Save(dataCfg);
-//    data_cfg_t dataCfg1;
-//    FlashStore_GetLatest(&dataCfg1);
-//    printf("u:     %lu\n", dataCfg1.u);
-//    printf("psqr:  %lu\n", dataCfg1.psqr);
-//    printf("ch1:   %lu\n", dataCfg1.ch1);
-//    printf("cool:  %lu\n", dataCfg1.cool);
-//    printf("ch2:   %lu\n", dataCfg1.ch2);
-//    printf("type:  %lu\n", dataCfg1.type);
-//    printf("count: %lu\n", dataCfg1.count);
-//    printf("flag:  %lu\n", dataCfg1.flag);
 
     initUI();
 
-//    ShowCnt(12345);
+    ShowCnt(g_count);
 //    ShowC1C2(1.23f,2.3f);
 //    ShowC3C4(2.34f,4.50f);
-    ShowSetVoltage(6.7f);
-    ShowSQDuration(2.1f);
-    ShowWE1Duration(1.3f);
-    ShowCOOLDuration(3.5f);
-    ShowWE2Duration(5.7f);
-    ShowWeldingCurrent(4567);
+    ShowWeldingMode(g_weldingMode,0);
+    ShowSetVoltage(g_U,0);
+    ShowSQDuration(g_psqr,0);
+    ShowWE1Duration(g_ch1,0);
+    ShowCOOLDuration(g_cool,0);
+    ShowWE2Duration(g_ch2,0);
+    ShowWeldingCurrent(4381);
+    ShowSelectedButton(255);
+
+    LCD_Turn_On_Backlight();
+
 
   /* USER CODE END 2 */
 
@@ -1218,25 +803,23 @@ int main(void)
   {
       env_detect();
       uint64_t crrtime = Get_Global_Time_us();
-      uint64_t buzzertime = crrtime;
       if(crrtime > pretime + 100000)
       {
           pretime = crrtime;
-//          输出格式: 时间(ms),目标电压,电容1,电容2,电容3,电容4,状�??
-          printf("Set=%u,T=%u,C1=%u,C2=%u,C3=%u,C4=%u,St=%d\r\n",
-                 g_target_voltage_mv,
-                 g_temp,
-                 g_cap_voltage_mv[0],
-                 g_cap_voltage_mv[1],
-                 g_cap_voltage_mv[2],
-                 g_cap_voltage_mv[3],
-                 g_state);
+//          printf("Set=%u,T=%u,C1=%u,C2=%u,C3=%u,C4=%u,St=%d\r\n",
+//                 g_target_voltage_mv,
+//                 g_temp,
+//                 g_cap_voltage_mv[0],
+//                 g_cap_voltage_mv[1],
+//                 g_cap_voltage_mv[2],
+//                 g_cap_voltage_mv[3],
+//                 g_state);
       }
-
       update_state_machine();
       update_pulse_generation();
       update_cap_equalizer();
       saveBeforeExit();
+
 
 //      HAL_GPIO_TogglePin(LED2_GPIO_Port,LED2_Pin);
     /* USER CODE END WHILE */
@@ -1291,70 +874,36 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-uint32_t state = 0;
-uint64_t BtnTimeStamp = 0;
-uint64_t AmtTrigTimeStamp = 0;
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-    uint8_t pha;
-    uint8_t phb;
-    if(g_pulse_generating == 0)
-    {
-        switch(GPIO_Pin) {
-            case SET_Pin:
-                if(Get_Global_Time_us()>BtnTimeStamp+500000)
-                {
-                    didi();
-                    g_btn = 1;
-                    BtnTimeStamp = Get_Global_Time_us();
-                }
-                break;
-            case PHA_Pin:
-
-                pha = HAL_GPIO_ReadPin(PHA_GPIO_Port,PHA_Pin);
-                phb = HAL_GPIO_ReadPin(PHB_GPIO_Port,PHB_Pin);
-                printf("pha:%d,phb:%d\r\n",pha,phb);
-                if(pha==1 && phb==0) // product xuan niu
-                    // if(phb==1 && pha==0) // my xuan niu
-                {
-                    state = 10;
-                }
-                if(state == 10 && pha==0 && phb==1)
-                {
-                    didi();
-                    g_cnt ++;
-                    state = 0;
-                }
-                if(pha==0 && phb==0)
-                    //if(pha==0 && phb==0) // my xuan niu
-                {
-                    state = 11;
-                }
-                if(state == 11 && pha==0 && phb==0)
-                {
-                    didi();
-                    g_cnt --;
-                    state = 0;
-                }
-                break;
-            case AMT_TRIG_Pin:
-                if(Get_Global_Time_us()>AmtTrigTimeStamp+1000000)
-                {
-                    trig_type = 1;
-                    AmtTrigTimeStamp = Get_Global_Time_us();
-                }
-                break;
-            case AUTO_TRIG_Pin:
-                trig_type = 2;
-                break;
-            case PRE_EXIT_Pin:
-                pre_exit = 1;
-                break;
-            default:
-                break;
-        }
-    }
-}
+//uint32_t state = 0;
+//uint64_t AmtTrigTimeStamp = 0;
+//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+//{
+//    static uint64_t  timestamp;
+//    static uint32_t BTN_cnt;
+//    static uint32_t PHA_cnt;
+//    static uint32_t PHB_cnt;
+//
+//    if(g_pulse_generating == 0 )//&& Get_Global_Time_us()>timestamp+70000
+//    {
+//        switch(GPIO_Pin) {
+//            case AMT_TRIG_Pin:
+//                if(Get_Global_Time_us()>AmtTrigTimeStamp+1000000)
+//                {
+//                    trig_type = MANUAL;
+//                    AmtTrigTimeStamp = Get_Global_Time_us();
+//                }
+//                break;
+//            case AUTO_TRIG_Pin:
+//                trig_type = AUTO;
+//                break;
+//            case PRE_EXIT_Pin:
+//                pre_exit = 1;
+//                break;
+//            default:
+//                break;
+//        }
+//    }
+//}
 /* USER CODE END 4 */
 
 /**

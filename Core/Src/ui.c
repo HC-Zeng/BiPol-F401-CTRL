@@ -53,7 +53,7 @@ void Draw_RoundedRectangleBody(u16 bbx, u16 bby)
     LCD_Fill(bx+10,by+7,bx+12,by+9, STEEL_BLUE);
 
 }
-void Draw_RoundedRectangleEdge(u16 bbx, u16 bby)
+void Draw_RoundedRectangleEdge(u16 bbx, u16 bby, u16 color)
 {
     /*
      * 画圆角矩形框
@@ -61,65 +61,65 @@ void Draw_RoundedRectangleEdge(u16 bbx, u16 bby)
     u16 bx=bbx;
     u16 by=bby;
 
-    LCD_Fill(bx+12,by+0,bx+80,by+2, PALE_SILVER);
-    LCD_Fill(bx+0,by+12,bx+2,by+38, PALE_SILVER);
-    LCD_Fill(bx+12,by+49,bx+80,by+51, PALE_SILVER);
-    LCD_Fill(bx+91,by+12,bx+93,by+38, PALE_SILVER);
+    LCD_Fill(bx+12,by+0,bx+80,by+2, color);
+    LCD_Fill(bx+0,by+12,bx+2,by+38, color);
+    LCD_Fill(bx+12,by+49,bx+80,by+51, color);
+    LCD_Fill(bx+91,by+12,bx+93,by+38, color);
 
-    LCD_Fill(bx+0,by+10,bx+2,by+12, PALE_SILVER);
-    LCD_Fill(bx+1,by+7,bx+3,by+9, PALE_SILVER);
-    LCD_Fill(bx+2,by+5,bx+4,by+6, PALE_SILVER);
-    LCD_Fill(bx+4,by+7,bx+4,by+7, PALE_SILVER);
-    LCD_Fill(bx+3,by+4,bx+4,by+4, PALE_SILVER);
-    LCD_Fill(bx+4,by+3,bx+4,by+3, PALE_SILVER);
-    LCD_Fill(bx+5,by+5,bx+5,by+5, PALE_SILVER);
-    LCD_Fill(bx+5,by+2,bx+6,by+4, PALE_SILVER);
-    LCD_Fill(bx+7,by+4,bx+7,by+4, PALE_SILVER);
-    LCD_Fill(bx+7,by+1,bx+9,by+3, PALE_SILVER);
-    LCD_Fill(bx+10,by+0,bx+12,by+2, PALE_SILVER);
+    LCD_Fill(bx+0,by+10,bx+2,by+12, color);
+    LCD_Fill(bx+1,by+7,bx+3,by+9, color);
+    LCD_Fill(bx+2,by+5,bx+4,by+6, color);
+    LCD_Fill(bx+4,by+7,bx+4,by+7, color);
+    LCD_Fill(bx+3,by+4,bx+4,by+4, color);
+    LCD_Fill(bx+4,by+3,bx+4,by+3, color);
+    LCD_Fill(bx+5,by+5,bx+5,by+5, color);
+    LCD_Fill(bx+5,by+2,bx+6,by+4, color);
+    LCD_Fill(bx+7,by+4,bx+7,by+4, color);
+    LCD_Fill(bx+7,by+1,bx+9,by+3, color);
+    LCD_Fill(bx+10,by+0,bx+12,by+2, color);
 
     bx=bbx+81;
-    LCD_Fill(bx+0,by+0,bx+2,by+2, PALE_SILVER);
-    LCD_Fill(bx+3,by+1,bx+5,by+3, PALE_SILVER);
-    LCD_Fill(bx+5,by+4,bx+5,by+4, PALE_SILVER);
-    LCD_Fill(bx+6,by+2,bx+7,by+4, PALE_SILVER);
-    LCD_Fill(bx+7,by+5,bx+7,by+5, PALE_SILVER);
-    LCD_Fill(bx+8,by+3,bx+8,by+4, PALE_SILVER);
-    LCD_Fill(bx+8,by+5,bx+10,by+6, PALE_SILVER);
-    LCD_Fill(bx+9,by+4,bx+9,by+4, PALE_SILVER);
-    LCD_Fill(bx+8,by+7,bx+8,by+7, PALE_SILVER);
-    LCD_Fill(bx+9,by+7,bx+11,by+9, PALE_SILVER);
-    LCD_Fill(bx+10,by+10,bx+12,by+12, PALE_SILVER);
+    LCD_Fill(bx+0,by+0,bx+2,by+2, color);
+    LCD_Fill(bx+3,by+1,bx+5,by+3, color);
+    LCD_Fill(bx+5,by+4,bx+5,by+4, color);
+    LCD_Fill(bx+6,by+2,bx+7,by+4, color);
+    LCD_Fill(bx+7,by+5,bx+7,by+5, color);
+    LCD_Fill(bx+8,by+3,bx+8,by+4, color);
+    LCD_Fill(bx+8,by+5,bx+10,by+6, color);
+    LCD_Fill(bx+9,by+4,bx+9,by+4, color);
+    LCD_Fill(bx+8,by+7,bx+8,by+7, color);
+    LCD_Fill(bx+9,by+7,bx+11,by+9, color);
+    LCD_Fill(bx+10,by+10,bx+12,by+12, color);
 
     bx=bbx+81;
     by=bby+39;
-    LCD_Fill(bx+10,by+0,bx+12,by+2, PALE_SILVER);
-    LCD_Fill(bx+9,by+3,bx+11,by+5, PALE_SILVER);
-    LCD_Fill(bx+8,by+5,bx+8,by+5, PALE_SILVER);
-    LCD_Fill(bx+8,by+6,bx+10,by+7, PALE_SILVER);
-    LCD_Fill(bx+7,by+7,bx+7,by+7, PALE_SILVER);
-    LCD_Fill(bx+8,by+8,bx+9,by+8, PALE_SILVER);
-    LCD_Fill(bx+8,by+9,bx+8,by+9, PALE_SILVER);
-    LCD_Fill(bx+6,by+8,bx+7,by+10, PALE_SILVER);
-    LCD_Fill(bx+5,by+8,bx+5,by+8, PALE_SILVER);
-    LCD_Fill(bx+3,by+9,bx+5,by+11, PALE_SILVER);
-    LCD_Fill(bx+0,by+10,bx+2,by+12, PALE_SILVER);
+    LCD_Fill(bx+10,by+0,bx+12,by+2, color);
+    LCD_Fill(bx+9,by+3,bx+11,by+5, color);
+    LCD_Fill(bx+8,by+5,bx+8,by+5, color);
+    LCD_Fill(bx+8,by+6,bx+10,by+7, color);
+    LCD_Fill(bx+7,by+7,bx+7,by+7, color);
+    LCD_Fill(bx+8,by+8,bx+9,by+8, color);
+    LCD_Fill(bx+8,by+9,bx+8,by+9, color);
+    LCD_Fill(bx+6,by+8,bx+7,by+10, color);
+    LCD_Fill(bx+5,by+8,bx+5,by+8, color);
+    LCD_Fill(bx+3,by+9,bx+5,by+11, color);
+    LCD_Fill(bx+0,by+10,bx+2,by+12, color);
 
     bx=bbx+0;
     by=bby+39;
-    LCD_Fill(bx+0,by+0,bx+2,by+2, PALE_SILVER);
-    LCD_Fill(bx+1,by+3,bx+3,by+5, PALE_SILVER);
-    LCD_Fill(bx+4,by+5,bx+4,by+5, PALE_SILVER);
-    LCD_Fill(bx+2,by+6,bx+4,by+7, PALE_SILVER);
-    LCD_Fill(bx+5,by+7,bx+5,by+7, PALE_SILVER);
-    LCD_Fill(bx+3,by+8,bx+3,by+8, PALE_SILVER);
-    LCD_Fill(bx+4,by+8,bx+4,by+9, PALE_SILVER);
-    LCD_Fill(bx+5,by+8,bx+6,by+10, PALE_SILVER);
-    LCD_Fill(bx+7,by+8,bx+7,by+8, PALE_SILVER);
-    LCD_Fill(bx+7,by+9,bx+9,by+11, PALE_SILVER);
-    LCD_Fill(bx+10,by+10,bx+12,by+12, PALE_SILVER);
+    LCD_Fill(bx+0,by+0,bx+2,by+2, color);
+    LCD_Fill(bx+1,by+3,bx+3,by+5, color);
+    LCD_Fill(bx+4,by+5,bx+4,by+5, color);
+    LCD_Fill(bx+2,by+6,bx+4,by+7, color);
+    LCD_Fill(bx+5,by+7,bx+5,by+7, color);
+    LCD_Fill(bx+3,by+8,bx+3,by+8, color);
+    LCD_Fill(bx+4,by+8,bx+4,by+9, color);
+    LCD_Fill(bx+5,by+8,bx+6,by+10, color);
+    LCD_Fill(bx+7,by+8,bx+7,by+8, color);
+    LCD_Fill(bx+7,by+9,bx+9,by+11, color);
+    LCD_Fill(bx+10,by+10,bx+12,by+12, color);
 }
-void Draw_RoundedRectangleCorner(u16 bbx,u16 bby)
+void Draw_RoundedRectangleCorner(u16 bbx,u16 bby, uint16_t color)
 {
     /*
      * 圆角矩形的四个角，即非圆角的那些�?
@@ -128,40 +128,40 @@ void Draw_RoundedRectangleCorner(u16 bbx,u16 bby)
     // 四角
     bx=bbx;
     by=bby;
-    LCD_Fill(bx+0,by+1,bx+0,by+9, DARK_GRAY);
-    LCD_Fill(bx+1,by+0,bx+1,by+6, DARK_GRAY);
-    LCD_Fill(bx+2,by+0,bx+9,by+0, DARK_GRAY);
-    LCD_Fill(bx+2,by+1,bx+6,by+1, DARK_GRAY);
+    LCD_Fill(bx+0,by+1,bx+0,by+9, color);
+    LCD_Fill(bx+1,by+0,bx+1,by+6, color);
+    LCD_Fill(bx+2,by+0,bx+9,by+0, color);
+    LCD_Fill(bx+2,by+1,bx+6,by+1, color);
 
     bx=bbx+81;
     by=bby;
-    LCD_Fill(bx+3,by+0,bx+11,by+0, DARK_GRAY);
-    LCD_Fill(bx+6,by+1,bx+12,by+1, DARK_GRAY);
-    LCD_Fill(bx+11,by+2,bx+11,by+6, DARK_GRAY);
-    LCD_Fill(bx+12,by+2,bx+12,by+9, DARK_GRAY);
+    LCD_Fill(bx+3,by+0,bx+11,by+0, color);
+    LCD_Fill(bx+6,by+1,bx+12,by+1, color);
+    LCD_Fill(bx+11,by+2,bx+11,by+6, color);
+    LCD_Fill(bx+12,by+2,bx+12,by+9, color);
 
     bx=bbx+81;
     by=bby+39;
-    LCD_Fill(bx+3,by+12,bx+10,by+12, DARK_GRAY);
-    LCD_Fill(bx+6,by+11,bx+10,by+11, DARK_GRAY);
-    LCD_Fill(bx+11,by+6,bx+11,by+12, DARK_GRAY);
-    LCD_Fill(bx+12,by+3,bx+12,by+11, DARK_GRAY);
+    LCD_Fill(bx+3,by+12,bx+10,by+12, color);
+    LCD_Fill(bx+6,by+11,bx+10,by+11, color);
+    LCD_Fill(bx+11,by+6,bx+11,by+12, color);
+    LCD_Fill(bx+12,by+3,bx+12,by+11, color);
 
     bx=bbx;
     by=bby+39;
-    LCD_Fill(bx+0,by+3,bx+0,by+10, DARK_GRAY);
-    LCD_Fill(bx+1,by+6,bx+1,by+10, DARK_GRAY);
-    LCD_Fill(bx+0,by+11,bx+6,by+11, DARK_GRAY);
-    LCD_Fill(bx+1,by+12,bx+9,by+12, DARK_GRAY);
+    LCD_Fill(bx+0,by+3,bx+0,by+10, color);
+    LCD_Fill(bx+1,by+6,bx+1,by+10, color);
+    LCD_Fill(bx+0,by+11,bx+6,by+11, color);
+    LCD_Fill(bx+1,by+12,bx+9,by+12, color);
 }
 void Draw_RoundedRectangle(u16 bx, u16 by)
 {
     /*
      * 画完整的圆角矩形
      * */
-    Draw_RoundedRectangleEdge(bx, by);
+    Draw_RoundedRectangleEdge(bx, by, PALE_SILVER);
     Draw_RoundedRectangleBody(bx, by);
-    Draw_RoundedRectangleCorner(bx,by);
+    Draw_RoundedRectangleCorner(bx,by, DARK_GRAY);
 }
 void Draw_WaveLine() {
     /*
@@ -241,15 +241,16 @@ void Draw_WaveLine() {
 void Draw_StaticText()
 {
     POINT_COLOR = WHITE;
+    BACK_COLOR = BLACK;
     LCD_ShowSongtiString2010(20,5,"TMAXCESW",0);
     LCD_ShowSongtiString2010(340,5,"Cnt:",0);
 
+    BACK_COLOR = GOLDEN_YELLOW;
     LCD_ShowHeitiString2010(10, 41, "CH3");
 
+    BACK_COLOR = DARK_RED_BROWN;
     LCD_ShowHeitiString2010(70,46,"WM");
-    LCD_ShowHeitiString2010(100,46,"AUTO");
     LCD_ShowHeitiString2010(170,46,"U/V");
-
     LCD_ShowHeitiString2010(280,46,"I/A");
 
     LCD_ShowSongtiString2010(387, 72, "C",0);
@@ -260,6 +261,7 @@ void Draw_StaticText()
 
     LCD_ShowSongtiString2010(390, 192, "V",0);
 
+    BACK_COLOR = STEEL_BLUE;
     LCD_ShowHeitiString2010(35, 228, "SQ");
     LCD_ShowHeitiString2010(130, 228, "WE1");
     LCD_ShowHeitiString2010(220, 228, "COOL");
@@ -275,6 +277,7 @@ void Draw_StaticText()
 void ShowCnt(uint32_t cnt)
 {
     char buffer[8];
+    POINT_COLOR = WHITE;
     BACK_COLOR = BLACK;
     snprintf(buffer, sizeof(buffer), "%07lu", cnt);
     LCD_ShowSongtiString2010(390, 5, buffer,1);
@@ -282,6 +285,7 @@ void ShowCnt(uint32_t cnt)
 void ShowC1C2(float vc1, float vc2)
 {
     char buffer[8];
+    POINT_COLOR = WHITE;
     BACK_COLOR = DARK_BROWN;
     snprintf(buffer, sizeof(buffer), "%.2f", vc1);
     LCD_ShowSongtiString1407(420, 38, buffer);
@@ -297,6 +301,7 @@ void ShowC1C2(float vc1, float vc2)
 }
 void ShowC3C4(float vc3, float vc4) {
     char buffer[8];
+    POINT_COLOR = WHITE;
     BACK_COLOR = MIDNIGHT_BLUE;
     snprintf(buffer, sizeof(buffer), "%.2f", vc3);
     LCD_ShowSongtiString1407(420, 98, buffer);
@@ -310,49 +315,145 @@ void ShowC3C4(float vc3, float vc4) {
     LCD_ShowSongtiString1407(420, 130, buffer);
     LCD_ShowSongtiString1407(456, 130, "V");
 }
-void ShowSetVoltage(float v)
+void ShowSetVoltage(float v,uint8_t editing)
 {
     char buffer[8];
-    BACK_COLOR = CRIMSON_RED;
+
     snprintf(buffer, sizeof(buffer), "%.2f", v);
 
+    BACK_COLOR = DARK_RED_BROWN;
     LCD_ShowHeitiString2010(210,46,buffer);
 
+    BACK_COLOR = CRIMSON_RED;
+    if(editing)
+    {
+        LCD_DrawRectangle(398, 162, 456, 194);
+    }
+    else
+    {
+        POINT_COLOR = BACK_COLOR;
+        LCD_DrawRectangle(398, 162, 456, 194);
+    }
+    POINT_COLOR = WHITE;
     LCD_ShowHeitiString2814(400,164,buffer);
     LCD_ShowHeitiString2814(460,164,"V");
 }
-void ShowSQDuration(float dur)
+void ShowSQDuration(float dur,uint8_t editing)
 {
     char buffer[8];
+    POINT_COLOR = WHITE;
+    BACK_COLOR = DARK_RED_BROWN;
+    if(editing)
+    {
+        LCD_DrawRectangle(12, 118, 56, 150);
+    }
+    else
+    {
+        POINT_COLOR = BACK_COLOR;
+        LCD_DrawRectangle(12, 118, 56, 150);
+    }
+    POINT_COLOR = WHITE;
     snprintf(buffer, sizeof(buffer), "%.1f", dur);
     LCD_ShowHeitiString2814(14,120,buffer);
-    LCD_ShowHeitiString2010(64,128,"MS");
+    LCD_ShowHeitiString2010(60,128,"S");
 }
-void ShowWE1Duration(float dur)
+void ShowWE1Duration(float dur,uint8_t editing)
 {
     char buffer[8];
-    snprintf(buffer, sizeof(buffer), "%.1f", dur);
-    LCD_ShowHeitiString2814(106,120,buffer);
-    LCD_ShowHeitiString2010(156,128,"MS");
+    BACK_COLOR = DARK_RED_BROWN;
+    if(editing)
+    {
+        LCD_DrawRectangle(98, 118, 156, 150);
+    }
+    else
+    {
+        POINT_COLOR = BACK_COLOR;
+        LCD_DrawRectangle(98, 118, 156, 150);
+    }
+    POINT_COLOR = WHITE;
+
+    if(dur>=10)
+    {
+        snprintf(buffer, sizeof(buffer), "%.1f", dur);
+    }
+    else
+    {
+        snprintf(buffer, sizeof(buffer), "%.2f", dur);
+    }
+    LCD_ShowHeitiString2814(100,120,buffer);
+    LCD_ShowHeitiString2010(160,128,"MS");
 }
-void ShowCOOLDuration(float dur)
+void ShowCOOLDuration(float dur,uint8_t editing)
 {
     char buffer[8];
+    BACK_COLOR = DARK_RED_BROWN;
+    if(editing)
+    {
+        LCD_DrawRectangle(198, 118, 242, 150);
+    }
+    else
+    {
+        POINT_COLOR = BACK_COLOR;
+        LCD_DrawRectangle(198, 118, 242, 150);
+    }
+    POINT_COLOR = WHITE;
     snprintf(buffer, sizeof(buffer), "%.1f", dur);
     LCD_ShowHeitiString2814(200,120,buffer);
-    LCD_ShowHeitiString2010(250,128,"MS");
+    LCD_ShowHeitiString2010(246,128,"MS");
 }
-void ShowWE2Duration(float dur) {
+void ShowWE2Duration(float dur,uint8_t editing) {
     char buffer[8];
-    snprintf(buffer, sizeof(buffer), "%.1f", dur);
-    LCD_ShowHeitiString2814(296, 120, buffer);
-    LCD_ShowHeitiString2010(346, 128, "MS");
+    BACK_COLOR = DARK_RED_BROWN;
+    if(editing)
+    {
+        LCD_DrawRectangle(288, 118, 348, 150);
+    }
+    else
+    {
+        POINT_COLOR = BACK_COLOR;
+        LCD_DrawRectangle(288, 118, 348, 150);
+    }
+    POINT_COLOR = WHITE;
+    if(dur>=10)
+    {
+        snprintf(buffer, sizeof(buffer), "%.1f", dur);
+    }
+    else
+    {
+        snprintf(buffer, sizeof(buffer), "%.2f", dur);
+    }
+    LCD_ShowHeitiString2814(290, 120, buffer);
+    LCD_ShowHeitiString2010(350, 128, "MS");
 }
 void ShowWeldingCurrent(uint16_t curr)
 {
     char buffer[16];
-    snprintf(buffer, sizeof(buffer), "%u", curr);
+    BACK_COLOR = DARK_RED_BROWN;
+    snprintf(buffer, sizeof(buffer), "%04u", curr);
     LCD_ShowHeitiString2010(320,46,buffer);
+}
+void ShowWeldingMode(uint8_t mod,uint8_t editing)
+{
+    POINT_COLOR = WHITE;
+    BACK_COLOR = DARK_RED_BROWN;
+    if(editing)
+    {
+        LCD_DrawRectangle(98, 44, 140, 66);
+    }
+    else
+    {
+        POINT_COLOR = BACK_COLOR;
+        LCD_DrawRectangle(98, 44, 140, 66);
+    }
+    POINT_COLOR = WHITE;
+    if(mod==0)//Manual
+    {
+        LCD_ShowHeitiString2010(100,46,"MANL");
+    }else if(mod==1)//AUTO
+    {
+        LCD_ShowHeitiString2010(100,46,"AUTO");
+    }
+
 }
 void initUI()
 {
@@ -389,7 +490,7 @@ void initUI()
     LCD_Fill(384,30,384+96,30+60, DARK_BROWN);
     LCD_Fill(384,30+44,384+22,30+60, OLIVE_GREEN);
     POINT_COLOR = OLIVE_GREEN;
-    LCD_DrawRectangle(384,30,384+96,30+60);
+    LCD_DrawRectangle(384,30,384+96-1,30+60);
     LCD_DrawRectangle(384+1,30+1,384+96-1,30+60-1);
     LCD_DrawRectangle(384+2,30+2,384+96-2,30+60-2);
 
@@ -397,7 +498,7 @@ void initUI()
     LCD_Fill(384,90,384+96,90+60, MIDNIGHT_BLUE);
     LCD_Fill(384,90+44,384+22,90+60, COBALT_BLUE);
     POINT_COLOR = COBALT_BLUE;
-    LCD_DrawRectangle(384,90,384+96,90+60);
+    LCD_DrawRectangle(384,90,384+96-1,90+60);
     LCD_DrawRectangle(384+1,90+1,384+96-1,90+60-1);
     LCD_DrawRectangle(384+2,90+2,384+96-2,90+60-2);
 
@@ -405,10 +506,56 @@ void initUI()
     LCD_Fill(384,150,384+96,150+60, CRIMSON_RED);
     LCD_Fill(384,150+44,384+22,150+60, CORAL_PINK);
     POINT_COLOR = CORAL_PINK;
-    LCD_DrawRectangle(384,150,384+96,150+60);
+    LCD_DrawRectangle(384,150,384+96-1,150+60);
     LCD_DrawRectangle(384+1,150+1,384+96-1,150+60-1);
     LCD_DrawRectangle(384+2,150+2,384+96-2,150+60-2);
 
     Draw_WaveLine();
     Draw_StaticText();
+}
+
+void ShowSelectedButton(uint8_t idx)
+{
+    static uint8_t preIdx=255;
+    if(idx !=255)
+    {
+        if(idx != preIdx)
+        {
+            if(preIdx != 255)
+            {
+                if(preIdx<5)
+                {
+                    Draw_RoundedRectangleEdge(preIdx * 96, 320 - 2 * 54, PALE_SILVER);
+                }
+                else
+                {
+                    Draw_RoundedRectangleEdge((preIdx-5) * 96, 320 - 1 * 54, PALE_SILVER);
+                }
+            }
+
+            if(idx<5)
+            {
+                Draw_RoundedRectangleEdge(idx * 96, 320 - 2 * 54, WHITE);
+            }
+            else
+            {
+                Draw_RoundedRectangleEdge((idx-5) * 96, 320 - 1 * 54, WHITE);
+            }
+        }
+    }else // clear selected button
+    {
+        if(preIdx != 255)
+        {
+            if(preIdx<5)
+            {
+                Draw_RoundedRectangleEdge(preIdx * 96, 320 - 2 * 54, PALE_SILVER);
+            }
+            else
+            {
+                Draw_RoundedRectangleEdge((preIdx-5) * 96, 320 - 1 * 54, PALE_SILVER);
+            }
+        }
+    }
+
+    preIdx = idx;
 }
