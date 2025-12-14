@@ -242,11 +242,11 @@ void Draw_StaticText()
 {
     POINT_COLOR = WHITE;
     BACK_COLOR = BLACK;
-    LCD_ShowSongtiString2010(20,5,"TMAXCESW",0);
+    LCD_ShowSongtiString2010(20,5,"FMAXCESW",0);
     LCD_ShowSongtiString2010(340,5,"Cnt:",0);
 
     BACK_COLOR = GOLDEN_YELLOW;
-    LCD_ShowHeitiString2010(10, 41, "CH3");
+    LCD_ShowHeitiString2010(10, 41, "CH");
 
     BACK_COLOR = DARK_RED_BROWN;
     LCD_ShowHeitiString2010(70,46,"WM");
@@ -453,8 +453,46 @@ void ShowWeldingMode(uint8_t mod,uint8_t editing)
     {
         LCD_ShowHeitiString2010(100,46,"AUTO");
     }
+}
+
+void ShowSelectedChannel(uint8_t g_idx, uint8_t editing)
+{
+    POINT_COLOR = WHITE;
+    BACK_COLOR = GOLDEN_YELLOW;
+    if(editing)
+    {
+        LCD_DrawRectangle(30, 39, 44, 63);
+    }
+    else
+    {
+        POINT_COLOR = BACK_COLOR;
+        LCD_DrawRectangle(30, 39, 44, 63);
+    }
+
+    char buffer[16];
+    POINT_COLOR = WHITE;
+    snprintf(buffer, sizeof(buffer), "%d", g_idx+1);
+    LCD_ShowHeitiString2010(32, 41, buffer);
+}
+
+void ShowSaving(uint8_t editing)
+{
+
+    char buffer[8];
+    BACK_COLOR = DARK_RED_BROWN;
+    if(editing)
+    {
+        POINT_COLOR = RED;
+        LCD_ShowHeitiString2010(160,80,"SAVING...");
+    }
+    else
+    {
+        POINT_COLOR = BACK_COLOR;
+        LCD_ShowHeitiString2010(160,80,"SAVING...");
+    }
 
 }
+
 void initUI()
 {
     // First row of buttons at the bottom
@@ -529,7 +567,7 @@ void ShowSelectedButton(uint8_t idx)
                 }
                 else
                 {
-                    Draw_RoundedRectangleEdge((preIdx-5) * 96, 320 - 1 * 54, PALE_SILVER);
+                    Draw_RoundedRectangleEdge((9-preIdx) * 96, 320 - 1 * 54, PALE_SILVER);
                 }
             }
 
@@ -539,7 +577,7 @@ void ShowSelectedButton(uint8_t idx)
             }
             else
             {
-                Draw_RoundedRectangleEdge((idx-5) * 96, 320 - 1 * 54, WHITE);
+                Draw_RoundedRectangleEdge((9-idx) * 96, 320 - 1 * 54, WHITE);
             }
         }
     }else // clear selected button
@@ -552,7 +590,7 @@ void ShowSelectedButton(uint8_t idx)
             }
             else
             {
-                Draw_RoundedRectangleEdge((preIdx-5) * 96, 320 - 1 * 54, PALE_SILVER);
+                Draw_RoundedRectangleEdge((9-preIdx) * 96, 320 - 1 * 54, PALE_SILVER);
             }
         }
     }

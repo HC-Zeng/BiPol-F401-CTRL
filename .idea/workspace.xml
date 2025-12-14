@@ -12,38 +12,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f3cf9544-c875-4e3b-89ad-c098b2511466" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BiPol-F401-CTRL.ioc" beforeDir="false" afterPath="$PROJECT_DIR$/BiPol-F401-CTRL.ioc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/FONT.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/FONT.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/Inc/LCD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/LCD.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/main.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/main.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/stm32f4xx_it.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/stm32f4xx_it.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/tim.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/tim.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Inc/flash_store.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/flash_store.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/Inc/ui.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/ui.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/LCD.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/LCD.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/gpio.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/gpio.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/flash_store.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/flash_store.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/Src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/stm32f4xx_it.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/stm32f4xx_it.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/tim.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/tim.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/Src/ui.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/ui.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.elf" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.elf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.hex" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.hex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.map" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.19.2/CMakeDetermineCompilerABI_C.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.19.2/CMakeDetermineCompilerABI_C.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.19.2/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.19.2/CMakeDetermineCompilerABI_CXX.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/C.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/C.includecache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/LCD.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/LCD.c.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/gpio.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/gpio.c.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/flash_store.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/flash_store.c.obj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/main.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/main.c.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/stm32f4xx_it.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/stm32f4xx_it.c.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/tim.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/tim.c.obj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/ui.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/ui.c.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,19 +78,14 @@
     </key>
   </component>
   <component name="RunManager" selected="OpenOCD Download &amp; Run.OCD BiPol-F401-CTRL">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="BiPol-F401-CTRL.elf" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="BiPol-F401-CTRL" TARGET_NAME="BiPol-F401-CTRL.elf" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="BiPol-F401-CTRL" RUN_TARGET_NAME="BiPol-F401-CTRL.elf">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="calculate" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -164,6 +142,10 @@
       <workItem from="1763776335392" duration="12017000" />
       <workItem from="1763894170131" duration="6981000" />
       <workItem from="1764160250182" duration="44870000" />
+      <workItem from="1764502116380" duration="1314000" />
+      <workItem from="1764942378137" duration="604000" />
+      <workItem from="1764945470726" duration="10385000" />
+      <workItem from="1765592688407" duration="10722000" />
     </task>
     <servers />
   </component>

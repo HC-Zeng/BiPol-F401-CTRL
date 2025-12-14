@@ -22,26 +22,26 @@ typedef struct {
     uint32_t crc32;         // CRC32校验值
 
     // 8个u32数据
-    uint32_t u;
-    uint32_t psqr;
-    uint32_t ch1;
-    uint32_t cool;
-    uint32_t ch2;
-    uint32_t type;
+    uint32_t u[5];
+    uint32_t psqr[5];
+    uint32_t ch1[5];
+    uint32_t cool[5];
+    uint32_t ch2[5];
+    uint32_t idx;
     uint32_t count;
-    uint32_t flag;
+    uint32_t flag[5];
 } data_packet_t;
 #pragma pack(pop)
 
 typedef struct {
-    uint32_t u;
-    uint32_t psqr;
-    uint32_t ch1;
-    uint32_t cool;
-    uint32_t ch2;
-    uint32_t type;
+    uint32_t u[5];
+    uint32_t psqr[5];
+    uint32_t ch1[5];
+    uint32_t cool[5];
+    uint32_t ch2[5];
+    uint32_t idx;
     uint32_t count;
-    uint32_t flag;
+    uint32_t flag[5];
 } data_cfg_t;
 
 #define DATA_PACKET_SIZE     sizeof(data_packet_t)  // 数据包大小

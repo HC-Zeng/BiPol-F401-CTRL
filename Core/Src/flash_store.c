@@ -116,19 +116,22 @@ bool FlashStore_Save(data_cfg_t dataCfg) {
     }
 
     // 准备数据包
-    data_packet_t new_packet = {
-            .magic = MAGIC_NUMBER,
-            .version = current_version + 1,
-            .crc32 = 0,
-            .u = dataCfg.u,
-            .psqr = dataCfg.psqr,
-            .ch1 = dataCfg.ch1,
-            .cool = dataCfg.cool,
-            .ch2 = dataCfg.ch2,
-            .type = dataCfg.type,
-            .count = dataCfg.count,
-            .flag = dataCfg.flag
-    };
+    data_packet_t new_packet;
+    new_packet.magic = MAGIC_NUMBER;
+    new_packet.version = current_version + 1;
+    new_packet.crc32 = 0;
+
+    new_packet.idx = dataCfg.idx;
+    new_packet.count = dataCfg.count;
+    for(int i=0;i<5;i++)
+    {
+        new_packet.u[i] = dataCfg.u[i];
+        new_packet.psqr[i] = dataCfg.psqr[i];
+        new_packet.ch1[i] = dataCfg.ch1[i];
+        new_packet.cool[i] = dataCfg.cool[i];
+        new_packet.ch2[i] = dataCfg.ch2[i];
+        new_packet.flag[i] = dataCfg.flag[i];
+    }
 
     // 计算CRC（令crc32=0来计算，读取的时候也要把crc32置为0再来计算）
     new_packet.crc32 = calculate_crc32(&new_packet);
@@ -166,14 +169,20 @@ bool FlashStore_Save(data_cfg_t dataCfg) {
 bool FlashStore_GetLatest(data_cfg_t *dataCfg) {
     data_packet_t packet;
     bool rtn = find_latest_packet(&packet);
-    dataCfg->u = packet.u;
-    dataCfg->psqr = packet.psqr;
-    dataCfg->ch1 = packet.ch1;
-    dataCfg->cool = packet.cool;
-    dataCfg->ch2 = packet.ch2;
-    dataCfg->type = packet.type;
-    dataCfg->count = packet.count;
-    dataCfg->flag = packet.flag;
+    if(rtn)
+    {
+        dataCfg->idx = packet.idx;
+        dataCfg->count = packet.count;
+        for(int i=0;i<5;i++)
+        {
+            dataCfg->u[i] = packet.u[i];
+            dataCfg->psqr[i] = packet.psqr[i];
+            dataCfg->ch1[i] = packet.ch1[i];
+            dataCfg->cool[i] = packet.cool[i];
+            dataCfg->ch2[i] = packet.ch2[i];
+            dataCfg->flag[i] = packet.flag[i];
+        }
+    }
     return rtn;
 }
 

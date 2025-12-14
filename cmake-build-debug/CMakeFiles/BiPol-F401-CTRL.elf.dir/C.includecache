@@ -6,38 +6,6 @@
 
 #IncludeRegexTransform: 
 
-../Core/Inc/adc.h
-main.h
-../Core/Inc/main.h
-
-../Core/Inc/crc.h
-main.h
-../Core/Inc/main.h
-
-../Core/Inc/debug_printf.h
-stdio.h
-../Core/Inc/stdio.h
-usart.h
-../Core/Inc/usart.h
-stm32f4xx_hal.h
-../Core/Inc/stm32f4xx_hal.h
-
-../Core/Inc/dma.h
-main.h
-../Core/Inc/main.h
-
-../Core/Inc/flash_store.h
-stm32f4xx_hal.h
-../Core/Inc/stm32f4xx_hal.h
-stdbool.h
--
-string.h
--
-
-../Core/Inc/gpio.h
-main.h
-../Core/Inc/main.h
-
 ../Core/Inc/lcd.h
 main.h
 ../Core/Inc/main.h
@@ -45,10 +13,6 @@ main.h
 ../Core/Inc/main.h
 stm32f4xx_hal.h
 ../Core/Inc/stm32f4xx_hal.h
-
-../Core/Inc/spi.h
-main.h
-../Core/Inc/main.h
 
 ../Core/Inc/stm32f4xx_hal_conf.h
 stm32f4xx_hal_rcc.h
@@ -150,17 +114,9 @@ stm32f4xx_hal_lptim.h
 stm32f4xx_hal_mmc.h
 ../Core/Inc/stm32f4xx_hal_mmc.h
 
-../Core/Inc/tim.h
-main.h
-../Core/Inc/main.h
-
 ../Core/Inc/ui.h
 LCD.h
 ../Core/Inc/lcd.h
-
-../Core/Inc/usart.h
-main.h
-../Core/Inc/main.h
 
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f401xc.h
 core_cm4.h
@@ -382,31 +338,9 @@ stm32f4xx_hal_def.h
 stm32f4xx.h
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx.h
 
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/main.c
-main.h
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/main.h
-adc.h
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/adc.h
-crc.h
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/crc.h
-dma.h
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/dma.h
-spi.h
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/spi.h
-tim.h
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/tim.h
-usart.h
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/usart.h
-gpio.h
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/gpio.h
-stdio.h
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/stdio.h
-lcd.h
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/lcd.h
-flash_store.h
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/flash_store.h
-debug_printf.h
-C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/debug_printf.h
+C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/ui.c
 ui.h
 C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/ui.h
+stdio.h
+C:/Users/HC/CLionProjects/BiPol-F401-CTRL/Core/Src/stdio.h
 

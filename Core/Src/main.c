@@ -62,10 +62,12 @@ void didi()
     HAL_TIM_Base_Start_IT(&htim3);
 }
 
+data_cfg_t g_dataCfg;
+
 void (*g_blanking_function)(float) = NULL;
 
 #define INIT_VAL 2000000000
-
+#define FLOAT_TO_UINT32(x) ((uint32_t)((x) + 0.5f))
 typedef enum {
     MANUAL,
     AUTO,
@@ -207,6 +209,7 @@ uint8_t value_updated = 0;
 
 
 WELDING_MODE g_weldingMode = 0; // 0:AMT,1: AUTO
+uint32_t g_idx = 0;   // 1- 5
 float g_U = 9.2f;     // 0.2-12.0 v
 float g_psqr = 0.1f;  // 0.1-5.0 s
 float g_ch1 = 9.6f;   // 0.1-25.0 ms
@@ -247,6 +250,23 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
         UpdateVoltageMeasurements();
     }
 }
+
+void updateParameter(uint32_t idx)
+{
+    g_U = (float)(g_dataCfg.u[idx]/100.0f);
+    g_psqr =  (float)(g_dataCfg.psqr[idx]/10.0f);
+    g_ch1 = (float)(g_dataCfg.ch1[idx]/10.0f);
+    g_cool = (float)(g_dataCfg.cool[idx]/10.0f);
+    g_ch2 = (float)(g_dataCfg.ch2[idx]/10.0f);
+
+    ShowSelectedChannel(g_idx,0);
+    ShowSetVoltage(g_U,0);
+    ShowSQDuration(g_psqr,0);
+    ShowWE1Duration(g_ch1,0);
+    ShowCOOLDuration(g_cool,0);
+    ShowWE2Duration(g_ch2,0);
+}
+
 
 #define ALPHA 0.1f
 static uint16_t filtered_voltage[4] = {0};
@@ -426,20 +446,18 @@ void update_cap_equalizer()
 
 static void saveVal()
 {
-    data_cfg_t dataCfg;
-    #define FLOAT_TO_UINT32(x) ((uint32_t)((x) + 0.5f))
-    dataCfg.u = FLOAT_TO_UINT32(g_U*100);
-    dataCfg.psqr = FLOAT_TO_UINT32(g_psqr*10);
-    dataCfg.ch1 = FLOAT_TO_UINT32(g_ch1*10);
-    dataCfg.cool = FLOAT_TO_UINT32(g_cool*10);
-    dataCfg.ch2 = FLOAT_TO_UINT32(g_ch2*10);
-    dataCfg.type = (uint32_t)(g_weldingMode);
-    dataCfg.count = (uint32_t)(g_count);
-    dataCfg.flag = 12345;
+    g_dataCfg.u[g_idx] = FLOAT_TO_UINT32(g_U*100);
+    g_dataCfg.psqr[g_idx] = FLOAT_TO_UINT32(g_psqr*10);
+    g_dataCfg.ch1[g_idx] = FLOAT_TO_UINT32(g_ch1*10);
+    g_dataCfg.cool[g_idx] = FLOAT_TO_UINT32(g_cool*10);
+    g_dataCfg.ch2[g_idx] = FLOAT_TO_UINT32(g_ch2*10);
+    g_dataCfg.idx = g_idx;
+    g_dataCfg.count = (uint32_t)(g_count);
+    g_dataCfg.flag[g_idx] = 12345;
 
 //    printf("dataCfg.psqr=%lu, psqr=%f",dataCfg.psqr,g_psqr);
 
-    FlashStore_Save(dataCfg);
+    FlashStore_Save(g_dataCfg);
 
     static uint32_t cnt = 0;
     cnt += 1;
@@ -449,12 +467,6 @@ void back_to_idle()
 {
     printf("back to idle\r\n");
     ShowSelectedButton(255); // 255 means no button selected
-    if(value_updated)
-    {
-        printf("value update\r\n");
-        saveVal();
-        value_updated = 0;
-    }
 }
 
 void saveBeforeExit()
@@ -465,7 +477,9 @@ void saveBeforeExit()
         if(value_updated)
         {
             printf("save before exit.\r\n");
-            saveVal();
+            g_dataCfg.idx = g_idx;
+            g_dataCfg.count = (uint32_t)(g_count);
+            FlashStore_Save(g_dataCfg);
             value_updated = 0;
         }
     }
@@ -491,9 +505,12 @@ void edit_state(uint8_t selected_index,uint8_t editing)
             ShowSetVoltage(g_U,editing);
             break;
         case 6:
-            ShowWeldingMode(g_weldingMode,editing);
+            ShowSelectedChannel(g_idx, editing);
             break;
         case 7:
+            ShowWeldingMode(g_weldingMode,editing);
+            break;
+        case 8:
             ShowWeldingMode(g_weldingMode,editing);
             break;
         default:
@@ -514,13 +531,24 @@ typedef enum {
 
 // Global state variable
 State current_state = IDLE_MODE;
-uint8_t selected_index = 9;  // Currently selected variable index:0,1,2,3,4,5 6,7,8,9==> PSQR, CH1, COOL, CH2, SOV, RCL, MAN, AUTO, PARAM, SAVE
+uint8_t selected_index = 9;  // Currently selected variable index:0,1,2,3,4,5 6,7,8,9==> PSQR, CH1, COOL, CH2, SOV, SAVE, PARAM, AUTO, MAN, RCL
 uint32_t prev_cnt = INIT_VAL;  // Same initial value as g_cnt.
 uint64_t last_activity_time = 0; // Last activity timestamp
+uint64_t last_saving_time = 0;
 const uint64_t IDLE_TIMEOUT = 3000000; // Idle timeout: 3s
+const uint64_t SAVING_TIMEOUT = 1000000; // 1s
 // State machine handler
 void update_state_machine(void) {
     uint64_t current_time = Get_Global_Time_us();
+
+    if(last_saving_time!=0)
+    {
+        if(current_time-last_saving_time>SAVING_TIMEOUT)
+        {
+            ShowSaving(0);
+            last_saving_time=0;
+        }
+    }
 
     // Check for idle timeout (except in IDLE_MODE state).
     if (current_state != IDLE_MODE) {
@@ -557,15 +585,25 @@ void update_state_machine(void) {
             // do nothing
         }else if (current_state == SELECT_MODE)
         {
-            if(selected_index==6)
+            current_state = EDIT_MODE;
+            if(selected_index==8)
             {
+                printf("mode=MANUAL\r\n");
                 g_weldingMode = MANUAL;
             }else if(selected_index==7)
             {
+                printf("mode=AUTO\r\n");
                 g_weldingMode = AUTO;
+            }else if(selected_index==5) // save parameter,no need enter edit mode
+            {
+                ShowSaving(1);
+                saveVal();
+                ShowSelectedChannel(g_idx,0);
+                current_state = SELECT_MODE;
+                last_saving_time = Get_Global_Time_us();
             }
             edit_state(selected_index,1);
-            current_state = EDIT_MODE;
+
 
         } else if (current_state == EDIT_MODE)
         {
@@ -627,12 +665,30 @@ void update_state_machine(void) {
                     g_U = (g_U < 0.01f) ? 0.0f : g_U;
                     ShowSetVoltage(g_U, 1);
                     break;
-                case 6:
-                    g_weldingMode = MANUAL;
-                    ShowWeldingMode(g_weldingMode, 1);
+                case 6: // param
+                    if(diff > 0)
+                    {
+                        g_idx += 1;
+                        g_idx = (g_idx>=5)? 0 : g_idx;
+                    }else if(diff<0)
+                    {
+                        if(g_idx>0)
+                        {
+                            g_idx -= 1;
+                        }else
+                        {
+                            g_idx=4;
+                        }
+                    }
+                    updateParameter(g_idx);
+                    ShowSelectedChannel(g_idx,1);
                     break;
                 case 7:
                     g_weldingMode = AUTO;
+                    ShowWeldingMode(g_weldingMode, 1);
+                    break;
+                case 8:
+                    g_weldingMode = MANUAL;
                     ShowWeldingMode(g_weldingMode, 1);
                     break;
                 default:
@@ -751,25 +807,51 @@ int main(void)
     HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(CTR_C4_GPIO_Port, CTR_C4_Pin, GPIO_PIN_RESET);
 
-    data_cfg_t dataCfg;
-    if(FlashStore_GetLatest(&dataCfg))
+
+    if(FlashStore_GetLatest(&g_dataCfg))
     {
-        if(dataCfg.u%2!=0)
+        g_idx = (uint32_t)g_dataCfg.idx;
+
+        for(int i=0;i<5;i++)
         {
-            dataCfg.u+=1;
+            if(g_dataCfg.u[i]%2!=0)
+            {
+                g_dataCfg.u[i]+=1;
+            }
         }
-        g_U = (float)(dataCfg.u/100.0f);
-        g_psqr =  (float)(dataCfg.psqr/10.0f);
-        g_ch1 = (float)(dataCfg.ch1/10.0f);
-        g_cool = (float)(dataCfg.cool/10.0f);
-        g_ch2 = (float)(dataCfg.ch2/10.0f);
-        g_weldingMode = (uint8_t)dataCfg.type;
-        g_count = dataCfg.count;
-        printf("Get data success,SQ=%f\r\n",g_psqr);
+
+        g_U = (float)(g_dataCfg.u[g_idx]/100.0f);
+        g_psqr =  (float)(g_dataCfg.psqr[g_idx]/10.0f);
+        g_ch1 = (float)(g_dataCfg.ch1[g_idx]/10.0f);
+        g_cool = (float)(g_dataCfg.cool[g_idx]/10.0f);
+        g_ch2 = (float)(g_dataCfg.ch2[g_idx]/10.0f);
+
+        g_count = g_dataCfg.count;
+        g_weldingMode = 0;
+        printf("Get data from NVM success.\r\n");
     }
     else
     {
-        printf("Get data failed\r\n");
+        printf("Get data from NVM failed. Creating init value.\r\n");
+        g_U=1.23f;
+        g_psqr=0.8f;
+        g_ch1=9.5f;
+        g_cool=8.0f;
+        g_ch2=9.5f;
+        g_idx=0;
+        g_count=0;
+        for(int i=0;i<5;i++)
+        {
+            g_dataCfg.u[i] = FLOAT_TO_UINT32(g_U*100);
+            g_dataCfg.psqr[i] = FLOAT_TO_UINT32(g_psqr*10);
+            g_dataCfg.ch1[i] = FLOAT_TO_UINT32(g_ch1*10);
+            g_dataCfg.cool[i] = FLOAT_TO_UINT32(g_cool*10);
+            g_dataCfg.ch2[i] = FLOAT_TO_UINT32(g_ch2*10);
+            g_dataCfg.flag[i] = 12345;
+        }
+        g_dataCfg.idx = g_idx;
+        g_dataCfg.count = (uint32_t)(g_count);
+
         saveVal();
     }
 
@@ -780,6 +862,7 @@ int main(void)
     initUI();
 
     ShowCnt(g_count);
+    ShowSelectedChannel(g_idx,0);
 //    ShowC1C2(1.23f,2.3f);
 //    ShowC3C4(2.34f,4.50f);
     ShowWeldingMode(g_weldingMode,0);
@@ -790,6 +873,7 @@ int main(void)
     ShowWE2Duration(g_ch2,0);
     ShowWeldingCurrent(4381);
     ShowSelectedButton(255);
+
 
     LCD_Turn_On_Backlight();
 
@@ -874,36 +958,6 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-//uint32_t state = 0;
-//uint64_t AmtTrigTimeStamp = 0;
-//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-//{
-//    static uint64_t  timestamp;
-//    static uint32_t BTN_cnt;
-//    static uint32_t PHA_cnt;
-//    static uint32_t PHB_cnt;
-//
-//    if(g_pulse_generating == 0 )//&& Get_Global_Time_us()>timestamp+70000
-//    {
-//        switch(GPIO_Pin) {
-//            case AMT_TRIG_Pin:
-//                if(Get_Global_Time_us()>AmtTrigTimeStamp+1000000)
-//                {
-//                    trig_type = MANUAL;
-//                    AmtTrigTimeStamp = Get_Global_Time_us();
-//                }
-//                break;
-//            case AUTO_TRIG_Pin:
-//                trig_type = AUTO;
-//                break;
-//            case PRE_EXIT_Pin:
-//                pre_exit = 1;
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-//}
 /* USER CODE END 4 */
 
 /**

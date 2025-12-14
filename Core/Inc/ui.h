@@ -18,6 +18,8 @@ void ShowWE1Duration(float dur,uint8_t editing);
 void ShowCOOLDuration(float dur,uint8_t editing);
 void ShowWE2Duration(float dur,uint8_t editing);
 void ShowWeldingCurrent(uint16_t curr);
+void ShowSelectedChannel(uint8_t g_idx, uint8_t editing);
+void ShowSaving(uint8_t editing);
 void initUI();
 void ShowSelectedButton(uint8_t idx);
 void ShowWeldingMode(uint8_t mod,uint8_t editing);

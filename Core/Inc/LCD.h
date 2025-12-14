@@ -29,64 +29,15 @@ extern _lcd_dev lcddev;	//管理LCD重要参数
 extern uint16_t  POINT_COLOR;//默认红色
 extern uint16_t  BACK_COLOR; //背景颜色.默认为白色
 
-////画笔颜色
-//#define WHITE         	 0xFFFF
-//#define BLACK         	 0x0000
-//#define BLUE         	     0x001F
-//#define BRED               0XF81F
-//#define GRED 			     0XFFE0
-//#define GBLUE			     0X07FF
-//#define RED           	 0xF800
-//#define MAGENTA       	 0xF81F
-//#define GREEN         	 0x07E0
-//#define CYAN          	 0x7FFF
-//#define YELLOW        	 0xFFE0
-//#define BROWN 			 0XBC40 //棕色
-//#define BRRED 			 0XFC07 //棕红色
-//#define GRAY  			 0X8430 //灰色
-////GUI颜色
-//
-//#define DARKBLUE      	 0X01CF	//深蓝色
-//#define LIGHTBLUE      	 0X7D7C	//浅蓝色
-//#define GRAYBLUE       	 0X5458 //灰蓝色
-////以上三色为PANEL的颜色
-//
-//#define LIGHTGREEN     	 0X841F //浅绿色
-//#define LGRAY 			 0XC618 //浅灰色(PANNEL),窗体背景色
-//
-//#define LGRAYBLUE          0XA651 //浅灰蓝色(中间层颜色)
-//#define LBBLUE             0X2B12 //浅棕蓝色(选择条目的反色)
 
 // 反相后的画笔颜色
 #define WHITE         	 0x0000  // 原0xFFFF → 反相后0x0000
 #define BLACK         	 0xFFFF  // 原0x0000 → 反相后0xFFFF
-#define BLUE         	 0xFFE0  // 原0x001F → 反相后0xFFE0
 #define BRED             0x07E0  // 原0xF81F → 反相后0x07E0
 #define GRED 			 0x001F  // 原0xFFE0 → 反相后0x001F
-#define GBLUE			 0xF800  // 原0x07FF → 反相后0xF800
 #define RED           	 0x07FF  // 原0xF800 → 反相后0x07FF
-#define MAGENTA       	 0x07E0  // 原0xF81F → 反相后0x07E0
-#define GREEN         	 0xF81F  // 原0x07E0 → 反相后0xF81F
-#define CYAN          	 0x8000  // 原0x7FFF → 反相后0x8000
-#define YELLOW        	 0x001F  // 原0xFFE0 → 反相后0x001F
-#define BROWN 			 0x43BF  // 原0xBC40 → 反相后0x43BF
-#define BRRED 			 0x03F8  // 原0xFC07 → 反相后0x03F8
-#define GRAY  			 0x7BCF  // 原0x8430 → 反相后0x7BCF
-
-// GUI颜色
-#define DARKBLUE      	 0xFE30  // 原0x01CF → 反相后0xFE30
-#define LIGHTBLUE      	 0x8283  // 原0x7D7C → 反相后0x8283
-#define GRAYBLUE       	 0xABA7  // 原0x5458 → 反相后0xABA7
-
-#define LIGHTGREEN     	 0x7BE0  // 原0x841F → 反相后0x7BE0
-#define LGRAY 			 0x39E7  // 原0xC618 → 反相后0x39E7
-
-#define LGRAYBLUE        0x59AE  // 原0xA651 → 反相后0x59AE
-#define LBBLUE           0xD4ED  // 原0x2B12 → 反相后0xD4ED
-
 #define PALE_SILVER      0x3208  // RGB(204,188,188) 反相后的RGB565值
 #define STEEL_BLUE 0xB4AB  // RGB(75,107,164) 反相后的RGB565值
-#define STEEL_BLUE_INV  0xA92B  // RGB(180,148,91) - 反色
 #define DARK_GRAY 0xBDF7  // RGB(64,64,64) 反相后的RGB565值
 #define DARK_RED_BROWN 0xAF3F  // RGB(87,25,2) 反相后的RGB565值
 #define GOLDEN_YELLOW 0x01DF  // RGB(251,202,3) 反相后的RGB565值
@@ -98,6 +49,26 @@ extern uint16_t  BACK_COLOR; //背景颜色.默认为白色
 #define CORAL_PINK 0x0491  // RGB(254,111,113) 反相后的RGB565值
 #define SAGE_GREEN 0x6B52  // RGB(147,148,108) 反相后的RGB565值
 #define LIME_GREEN 0x717C  // RGB(136,211,26) 反相后的RGB565值
+
+//// 正色画笔颜色（恢复后的颜色）
+//#define WHITE         	 0xFFFF  // 反相后0x0000 → 正色0xFFFF
+//#define BLACK         	 0x0000  // 反相后0xFFFF → 正色0x0000
+//#define BRED             0xF81F  // 反相后0x07E0 → 正色0xF81F
+//#define GRED 			 0xFFE0  // 反相后0x001F → 正色0xFFE0
+//#define RED           	 0xF800  // 反相后0x07FF → 正色0xF800
+//#define PALE_SILVER      0xCD73  // RGB(204,188,188) → 正色RGB(51,67,67) → RGB565 0xCD73
+//#define STEEL_BLUE       0x4B54  // RGB(75,107,164) → 正色RGB(180,148,91) → RGB565 0xB495
+//#define DARK_GRAY        0x4208  // RGB(64,64,64) → 正色RGB(191,191,191) → RGB565 0xFFFF
+//#define DARK_RED_BROWN   0x57C0  // RGB(87,25,2) → 正色RGB(168,230,253) → RGB565 0xA7FF
+//#define GOLDEN_YELLOW    0xFB20  // RGB(251,202,3) → 正色RGB(4,53,252) → RGB565 0x02BF
+//#define OLIVE_GREEN      0x4685  // RGB(70,114,5) → 正色RGB(185,141,250) → RGB565 0xBC7F
+//#define DARK_BROWN       0x4D40  // RGB(77,55,3) → 正色RGB(178,200,252) → RGB565 0xB3FF
+//#define MIDNIGHT_BLUE    0x1311  // RGB(19,17,118) → 正色RGB(236,238,137) → RGB565 0xEF76
+//#define COBALT_BLUE      0x034A  // RGB(3,74,148) → 正色RGB(252,181,107) → RGB565 0xFDAD
+//#define CRIMSON_RED      0xA60F  // RGB(166,15,20) → 正色RGB(89,240,235) → RGB565 0x5F9D
+//#define CORAL_PINK       0xFE6F  // RGB(254,111,113) → 正色RGB(1,144,142) → RGB565 0x0492
+//#define SAGE_GREEN       0x9394  // RGB(147,148,108) → 正色RGB(108,107,147) → RGB565 0x6B53
+//#define LIME_GREEN       0x88D3  // RGB(136,211,26) → 正色RGB(119,44,229) → RGB565 0x773D
 
 
 void LCD_Init(void);			   //初始化
