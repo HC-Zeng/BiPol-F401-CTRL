@@ -268,10 +268,10 @@ void Draw_StaticText()
     LCD_ShowHeitiString2010(320, 228, "WE2");
     LCD_ShowHeitiString2010(415, 228, "SOV");
 
-    LCD_ShowHeitiString2010(33, 283, "RCL");
+    LCD_ShowHeitiString2010(23, 283, "PARAM");
     LCD_ShowHeitiString2010(130, 283, "MAN");
     LCD_ShowHeitiString2010(219, 283, "AUTO");
-    LCD_ShowHeitiString2010(310, 283, "PARAM");
+    LCD_ShowHeitiString2010(320, 283, "RCL");
     LCD_ShowHeitiString2010(410, 283, "SAVE");
 }
 void ShowCnt(uint32_t cnt)

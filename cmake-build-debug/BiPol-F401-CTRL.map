@@ -3280,7 +3280,7 @@ LOAD c:/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/.
 LOAD c:/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/nofp\libm.a
 LOAD c:/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/thumb/v7e-m/nofp\libgcc.a
 
-.debug_info     0x00000000    0x1fe7b
+.debug_info     0x00000000    0x1fe7a
  .debug_info    0x00000000     0x2aa7 CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/LCD.c.obj
  .debug_info    0x00002aa7      0xb7f CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/adc.c.obj
  .debug_info    0x00003626      0x4b2 CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/crc.c.obj
@@ -3295,22 +3295,22 @@ LOAD c:/gcc-arm-none-eabi-10-2020-q4-major/bin/../lib/gcc/arm-none-eabi/10.2.1/t
  .debug_info    0x000095ab      0x174 CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/sysmem.c.obj
  .debug_info    0x0000971f      0x3a9 CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/system_stm32f4xx.c.obj
  .debug_info    0x00009ac8      0xe6f CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/tim.c.obj
- .debug_info    0x0000a937     0x36a5 CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/ui.c.obj
- .debug_info    0x0000dfdc      0x9e7 CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/usart.c.obj
- .debug_info    0x0000e9c3       0x22 CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Startup/startup_stm32f401rctx.s.obj
- .debug_info    0x0000e9e5      0x97b CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c.obj
- .debug_info    0x0000f360      0xeaf CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c.obj
- .debug_info    0x0001020f     0x1002 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c.obj
- .debug_info    0x00011211      0x3e2 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_crc.c.obj
- .debug_info    0x000115f3      0xb37 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c.obj
- .debug_info    0x0001212a      0x755 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c.obj
- .debug_info    0x0001287f      0xa1b CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c.obj
- .debug_info    0x0001329a      0x7d4 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c.obj
- .debug_info    0x00013a6e      0xb2a CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c.obj
- .debug_info    0x00014598     0x1e8e CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c.obj
- .debug_info    0x00016426     0x3d54 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c.obj
- .debug_info    0x0001a17a     0x1ad6 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c.obj
- .debug_info    0x0001bc50     0x422b CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c.obj
+ .debug_info    0x0000a937     0x36a4 CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/ui.c.obj
+ .debug_info    0x0000dfdb      0x9e7 CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/usart.c.obj
+ .debug_info    0x0000e9c2       0x22 CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Startup/startup_stm32f401rctx.s.obj
+ .debug_info    0x0000e9e4      0x97b CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c.obj
+ .debug_info    0x0000f35f      0xeaf CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c.obj
+ .debug_info    0x0001020e     0x1002 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c.obj
+ .debug_info    0x00011210      0x3e2 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_crc.c.obj
+ .debug_info    0x000115f2      0xb37 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c.obj
+ .debug_info    0x00012129      0x755 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c.obj
+ .debug_info    0x0001287e      0xa1b CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c.obj
+ .debug_info    0x00013299      0x7d4 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c.obj
+ .debug_info    0x00013a6d      0xb2a CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c.obj
+ .debug_info    0x00014597     0x1e8e CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c.obj
+ .debug_info    0x00016425     0x3d54 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c.obj
+ .debug_info    0x0001a179     0x1ad6 CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c.obj
+ .debug_info    0x0001bc4f     0x422b CMakeFiles/BiPol-F401-CTRL.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c.obj
 
 .debug_abbrev   0x00000000     0x3adb
  .debug_abbrev  0x00000000      0x2e0 CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/LCD.c.obj

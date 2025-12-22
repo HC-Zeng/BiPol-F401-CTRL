@@ -13,20 +13,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f3cf9544-c875-4e3b-89ad-c098b2511466" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/LCD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/LCD.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/flash_store.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/flash_store.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Inc/ui.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/ui.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/flash_store.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/flash_store.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Src/ui.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/ui.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.elf" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.elf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.hex" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.hex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.map" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/C.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/C.includecache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/flash_store.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/flash_store.c.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/main.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/main.c.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/ui.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/ui.c.obj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,6 +132,8 @@
       <workItem from="1764942378137" duration="604000" />
       <workItem from="1764945470726" duration="10385000" />
       <workItem from="1765592688407" duration="10722000" />
+      <workItem from="1765712729055" duration="21000" />
+      <workItem from="1766295624462" duration="635000" />
     </task>
     <servers />
   </component>
