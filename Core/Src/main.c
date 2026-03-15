@@ -807,6 +807,14 @@ int main(void)
     HAL_GPIO_WritePin(CTR_C3_GPIO_Port, CTR_C3_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(CTR_C4_GPIO_Port, CTR_C4_Pin, GPIO_PIN_RESET);
 
+    LCD_Turn_On_Backlight();
+    LCD_Init();
+    LCD_Display_Dir(USE_LCM_DIR); //Screen orientation
+    LCD_Clear(BLACK);
+//    LCD_Turn_On_Backlight();
+
+    initUI();
+    LCD_Display_On();
 
     if(FlashStore_GetLatest(&g_dataCfg))
     {
@@ -855,11 +863,13 @@ int main(void)
         saveVal();
     }
 
-    LCD_Init();
-    LCD_Display_Dir(USE_LCM_DIR); //Screen orientation
-    LCD_Clear(BLACK);
-
-    initUI();
+//    LCD_Init();
+//    LCD_Display_Dir(USE_LCM_DIR); //Screen orientation
+//    LCD_Clear(BLACK);
+//    LCD_Turn_On_Backlight();
+//
+//    initUI();
+//    LCD_Display_On();
 
     ShowCnt(g_count);
     ShowSelectedChannel(g_idx,0);
@@ -875,7 +885,7 @@ int main(void)
     ShowSelectedButton(255);
 
 
-    LCD_Turn_On_Backlight();
+//    LCD_Turn_On_Backlight();
 
 
   /* USER CODE END 2 */

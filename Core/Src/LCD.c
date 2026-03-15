@@ -5,6 +5,7 @@
 #include "spi.h"
 #include "stdio.h"
 #include <math.h>
+#include <stdlib.h>
 
 //LCD的画笔颜色和背景色
 uint16_t POINT_COLOR=WHITE;	//画笔颜色
@@ -264,29 +265,17 @@ void LCD_ShowNum(u16 x,u16 y,u32 num,u8 len,u8 size)
 }
 
 
-//清屏函数
-//color:要清屏的填充色
-void LCD_Clear(uint16_t color)
-{
-    uint32_t index=0;
-    uint32_t totalpoint=lcddev.width;
-    totalpoint*=lcddev.height; 			     //得到总点数
-    LCD_SetCursor(0x00,0x0000);	 //设置光标位置
-    LCD_WriteRAM_Prepare();     		     //开始写入GRAM
-    for(index=0;index<totalpoint;index++)LCD_WriteRAM(color);
-}
+
 
 void LCD_Init(void) {
     // 1. 复位序列
     HAL_GPIO_WritePin(LCD_RST_PORT, LCD_RST_PIN, GPIO_PIN_SET);
-    HAL_Delay(1);
     HAL_GPIO_WritePin(LCD_RST_PORT, LCD_RST_PIN, GPIO_PIN_RESET);
     HAL_Delay(10);
     HAL_GPIO_WritePin(LCD_RST_PORT, LCD_RST_PIN, GPIO_PIN_SET);
     HAL_Delay(120);
 
     //************* Start Initial Sequence **********//
-    HAL_Delay(120); // Delay 120ms
     LCD_WR_REG(0x11); // Sleep Out
     HAL_Delay(120); // Delay 120ms
     LCD_WR_REG(0xf0) ;
@@ -350,7 +339,17 @@ void LCD_Init(void) {
     LCD_WR_DATA(0x3c);
     LCD_WR_REG(0xf0);
     LCD_WR_DATA(0x69);
-    HAL_Delay(120); //Delay 120ms
+//    LCD_WR_REG(0x29);// Display on
+    LCD_WR_REG(0x28);// Display off
+}
+
+void LCD_Display_Off()
+{
+    LCD_WR_REG(0x28);// Display off
+}
+
+void LCD_Display_On()
+{
     LCD_WR_REG(0x29);// Display on
 }
 
@@ -467,35 +466,82 @@ void LCD_DrawRectangle(u16 x1, u16 y1, u16 x2, u16 y2)
 //区域大小:(xend-xsta+1)*(yend-ysta+1)
 //xsta
 //color:要填充的颜色
-void LCD_Fill(u16 sx,u16 sy,u16 ex,u16 ey,u16 color)
+void LCD_Fill_(u16 sx,u16 sy,u16 ex,u16 ey,u16 color)
 {
     u16 i,j;
     u16 xlen=0;
-    u16 temp;
-    if((lcddev.id==0X6804)&&(lcddev.dir==1))	//6804横屏的时候特殊处理
+    xlen=ex-sx+1;
+    for(i=sy;i<=ey;i++)
     {
-        temp=sx;
-        sx=sy;
-        sy=lcddev.width-ex-1;
-        ex=ey;
-        ey=lcddev.width-temp-1;
-        lcddev.dir=0;
-        lcddev.setxcmd=0X2A;
-        lcddev.setycmd=0X2B;
-        LCD_Fill(sx,sy,ex,ey,color);
-        lcddev.dir=1;
-        lcddev.setxcmd=0X2B;
-        lcddev.setycmd=0X2A;
+        LCD_SetCursor(sx,i);      				//设置光标位置
+        LCD_WriteRAM_Prepare();     			//开始写入GRAM
+        for(j=0;j<xlen;j++)LCD_WriteRAM(color);	//设置光标位置
+    }
+}
+
+void LCD_Fill(u16 sx, u16 sy, u16 ex, u16 ey, u16 color)
+{
+    u32 total_pixels = (ex - sx + 1) * (ey - sy + 1);
+    u32 i;
+
+    // 定义静态缓冲区（100*100像素，每个像素2字节）
+    #define BLOCK_SIZE_PIXELS  (100 * 100)  // 10000像素
+    #define BUFFER_SIZE_BYTES  (BLOCK_SIZE_PIXELS * 2)  // 20000字节
+    static uint8_t data_buffer[BUFFER_SIZE_BYTES];
+
+    // 预填充静态缓冲区（只填充一次）
+    if(total_pixels<=BLOCK_SIZE_PIXELS)
+    {
+        for(i = 0; i < total_pixels; i++) {
+            data_buffer[i*2] = (color >> 8) & 0xFF;   // 高字节
+            data_buffer[i*2 + 1] = color & 0xFF;      // 低字节
+        }
     }else
     {
-        xlen=ex-sx+1;
-        for(i=sy;i<=ey;i++)
-        {
-            LCD_SetCursor(sx,i);      				//设置光标位置
-            LCD_WriteRAM_Prepare();     			//开始写入GRAM
-            for(j=0;j<xlen;j++)LCD_WriteRAM(color);	//设置光标位置
+        for(i = 0; i < BLOCK_SIZE_PIXELS; i++) {
+            data_buffer[i*2] = (color >> 8) & 0xFF;   // 高字节
+            data_buffer[i*2 + 1] = color & 0xFF;      // 低字节
         }
     }
+
+
+    // 设置窗口
+    LCD_Set_Window(sx, sy, ex - sx + 1, ey - sy + 1);
+
+    // 准备写入GRAM
+    LCD_WR_REG(lcddev.wramcmd);
+
+    HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);   // DC=1
+    HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET); // CS=0
+    if(total_pixels<=BLOCK_SIZE_PIXELS)
+    {
+        HAL_SPI_Transmit(&LCD_SPI, data_buffer, total_pixels * 2, HAL_MAX_DELAY);
+    }else
+    {
+        u32 blocks = total_pixels / BLOCK_SIZE_PIXELS;        // 完整块数
+        u32 remaining = total_pixels % BLOCK_SIZE_PIXELS;     // 剩余像素数
+        for(int j=0;j<blocks;j++)
+        {
+            HAL_SPI_Transmit(&LCD_SPI, data_buffer, BLOCK_SIZE_PIXELS * 2, HAL_MAX_DELAY);
+        }
+        HAL_SPI_Transmit(&LCD_SPI, data_buffer, remaining * 2, HAL_MAX_DELAY);
+    }
+
+    HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);   // CS=1
+
+}
+
+//清屏函数
+//color:要清屏的填充色
+void LCD_Clear(uint16_t color)
+{
+//    uint32_t index=0;
+//    uint32_t totalpoint=lcddev.width;
+//    totalpoint*=lcddev.height; 			     //得到总点数
+    LCD_SetCursor(0x00,0x0000);	 //设置光标位置
+    LCD_WriteRAM_Prepare();     		     //开始写入GRAM
+//    for(index=0;index<totalpoint;index++)LCD_WriteRAM(color);
+    LCD_Fill(0,0,lcddev.width,lcddev.height,color);
 }
 
 
@@ -575,7 +621,7 @@ void LCD_Draw_Circle(u16 x0,u16 y0,u8 r)
     }
 }
 
-void LCD_ShowHeitiChar2010(uint16_t x, uint16_t y, char ch)
+void LCD_ShowHeitiChar2010_(uint16_t x, uint16_t y, char ch)
 {
     uint8_t idx = 0;
     switch(ch) {
@@ -638,6 +684,88 @@ void LCD_ShowHeitiChar2010(uint16_t x, uint16_t y, char ch)
         }
     }
 }
+
+void LCD_ShowHeitiChar2010(uint16_t x, uint16_t y, char ch)
+{
+    uint8_t idx = 0;
+    switch(ch) {
+        case '0': idx = 0; break;
+        case '1': idx = 1; break;
+        case '2': idx = 2; break;
+        case '3': idx = 3; break;
+        case '4': idx = 4; break;
+        case '5': idx = 5; break;
+        case '6': idx = 6; break;
+        case '7': idx = 7; break;
+        case '8': idx = 8; break;
+        case '9': idx = 9; break;
+        case 'A': idx = 10; break;
+        case 'B': idx = 11; break;
+        case 'C': idx = 12; break;
+        case 'D': idx = 13; break;
+        case 'E': idx = 14; break;
+        case 'F': idx = 15; break;
+        case 'G': idx = 16; break;
+        case 'H': idx = 17; break;
+        case 'I': idx = 18; break;
+        case 'J': idx = 19; break;
+        case 'K': idx = 20; break;
+        case 'L': idx = 21; break;
+        case 'M': idx = 22; break;
+        case 'N': idx = 23; break;
+        case 'O': idx = 24; break;
+        case 'P': idx = 25; break;
+        case 'Q': idx = 26; break;
+        case 'R': idx = 27; break;
+        case 'S': idx = 28; break;
+        case 'T': idx = 29; break;
+        case 'U': idx = 30; break;
+        case 'V': idx = 31; break;
+        case 'W': idx = 32; break;
+        case 'X': idx = 33; break;
+        case 'Y': idx = 34; break;
+        case 'Z': idx = 35; break;
+        case '/': idx = 36; break;
+        case '.': idx = 37; break;
+        case ':': idx = 38; break;
+        default: idx = 255; break; // 无效字符返回255
+    }
+
+    if(idx == 255) return;  // 无效字符直接返回
+
+    uint8_t buffer[20 * 10 * 2];  // 20行 * 10列 * 2字节 = 400字节
+    uint32_t buffer_index = 0;
+    uint16_t temp;
+
+    // 设置LCD窗口（显示区域）
+    LCD_Set_Window(x, y, 10, 20);  // 宽度10，高度20
+
+    // 准备写入GRAM
+    LCD_WR_REG(lcddev.wramcmd);
+
+    // 生成像素数据到缓冲区
+    for(uint8_t i = 0; i < 20; i++)  // 20行
+    {
+        // 获取当前行的16位字模数据
+        temp = (Heiti_2010[idx][2 * i + 1] << 8) + Heiti_2010[idx][2 * i];
+
+        for(uint8_t j = 0; j < 10; j++)  // 10列
+        {
+            // 根据当前最低位决定颜色
+            uint16_t color = (temp & 0x0001) ? POINT_COLOR : BACK_COLOR;
+
+            // 将16位颜色拆分为两个字节存入缓冲区
+            buffer[buffer_index++] = (color >> 8) & 0xFF;  // 高字节
+            buffer[buffer_index++] = color & 0xFF;         // 低字节
+
+            temp >>= 1;  // 右移一位，处理下一个位
+        }
+    }
+
+    // 一次性批量发送所有像素数据
+    LCD_WR_DATA_BULK(buffer, buffer_index);  // buffer_index = 400
+}
+
 
 void LCD_ShowHeitiString2010(uint16_t x, uint16_t y, const char *str)
 {
@@ -718,6 +846,7 @@ void LCD_ShowSongtiChar2010(uint16_t x, uint16_t y, char ch, uint8_t isCover) {
         }
     }
 }
+
 
 void LCD_ShowSongtiString2010(uint16_t x, uint16_t y, const char *str, uint8_t isCover)
 {

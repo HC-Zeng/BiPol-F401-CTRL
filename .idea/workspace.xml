@@ -13,6 +13,36 @@
   <component name="ChangeListManager">
     <list default="true" id="f3cf9544-c875-4e3b-89ad-c098b2511466" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BiPol-F401-CTRL.ioc" beforeDir="false" afterPath="$PROJECT_DIR$/BiPol-F401-CTRL.ioc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Inc/LCD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/LCD.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Inc/adc.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/adc.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Inc/crc.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/crc.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Inc/dma.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/dma.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Inc/gpio.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/gpio.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Inc/spi.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/spi.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Inc/tim.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/tim.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Inc/usart.h" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Inc/usart.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/LCD.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/LCD.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/adc.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/adc.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/crc.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/crc.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/dma.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/dma.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/gpio.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/gpio.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/spi.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/spi.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/tim.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/tim.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Src/usart.c" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Src/usart.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.elf" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.elf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.hex" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.hex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.map" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/BiPol-F401-CTRL.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.19.2/CMakeDetermineCompilerABI_C.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.19.2/CMakeDetermineCompilerABI_C.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.19.2/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.19.2/CMakeDetermineCompilerABI_CXX.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.19.2/CMakeSystem.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.19.2/CMakeSystem.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/C.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/C.includecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/LCD.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/LCD.c.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/main.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/main.c.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/ui.c.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/BiPol-F401-CTRL.elf.dir/Core/Src/ui.c.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,6 +164,11 @@
       <workItem from="1765592688407" duration="10722000" />
       <workItem from="1765712729055" duration="21000" />
       <workItem from="1766295624462" duration="635000" />
+      <workItem from="1766404527607" duration="575000" />
+      <workItem from="1766409173581" duration="83000" />
+      <workItem from="1773449052394" duration="415000" />
+      <workItem from="1773449481693" duration="12918000" />
+      <workItem from="1773477762425" duration="40000" />
     </task>
     <servers />
   </component>
